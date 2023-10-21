@@ -1,0 +1,40 @@
+.buttonAddProduct {
+    font-weight: bold !important;
+    border: solid #5f3c23;
+    border-radius: 20px;
+    text-decoration: none;
+    width: 100%;
+    color: white !important;
+    background-color: #5f3c23 !important;
+}
+
+.buttonAddProduct:hover {
+    transform: scale(1.01)
+}
+
+.productTitle {
+    color: #5f3c23 !important;
+}
+
+.editButton {
+    background-color: #5f3c23 !important;
+    color: white !important;
+}
+
+@media screen and (max-width: 576px) {
+    .scrollable-x-table {
+        overflow-x: scroll !important;
+    }
+
+    .scrollable-x-table::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .scrollable-x-table::-webkit-scrollbar-thumb {
+        background-color: #5f3c23;
+    }
+
+    .scrollable-x-table::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+}

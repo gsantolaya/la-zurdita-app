@@ -1,0 +1,19 @@
+.buttonAddExpense {
+    font-weight: bold !important;
+    border: solid #5f3c23;
+    border-radius: 20px;
+    margin: 5px;
+    padding: 3px !important;
+    text-decoration: none;
+    width: 100%;
+    color: white !important;
+    background-color: #5f3c23 !important;
+}
+
+.buttonAddExpense:hover {
+    transform: scale(1.05)
+}
+
+.expenseTitle {
+    color: #5f3c23 !important;
+}

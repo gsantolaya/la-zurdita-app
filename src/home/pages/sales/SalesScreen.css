@@ -1,0 +1,68 @@
+.buttonAddSale {
+    font-weight: bold !important;
+    border: solid white;
+    border-radius: 20px;
+    margin: 5px;
+    padding: 3px !important;
+    text-decoration: none;
+    width: 100%;
+    color: white !important;
+    background-color: #5f3c23 !important;
+}
+
+.buttonAddSale:hover {
+    transform: scale(1.05)
+}
+
+.saleTitle {
+    color: #5f3c23 !important;
+}
+
+.red-text {
+    color: red !important;
+}
+
+.green-text {
+    color: green !important;
+}
+
+.blue-text {
+    color: blue !important;
+}
+
+.scrollable-y-table {
+    max-height: 525px;
+    overflow-y: auto;
+    display: block;
+}
+
+.scrollable-y-table::-webkit-scrollbar {
+    width: 5px;
+}
+
+.scrollable-y-table::-webkit-scrollbar-thumb {
+    background-color: #5f3c23;
+}
+
+.scrollable-y-table::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+@media screen and (max-width: 576px) {
+    .scrollable-x-table {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .scrollable-x-table::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .scrollable-x-table::-webkit-scrollbar-thumb {
+        background-color: #5f3c23;
+    }
+
+    .scrollable-x-table::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+}

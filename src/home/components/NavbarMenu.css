@@ -1,0 +1,240 @@
+.navContainer {
+    background-color: #595858;
+}
+
+.containerNavLink {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.appLogoNavbar {
+    height: 51px;
+}
+
+.navLinks {
+    color: white !important;
+    font-weight: bold !important;
+    border: solid 2px white;
+    border-radius: 20px;
+    margin: 10px;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    text-decoration: none;
+}
+
+.navDropdownLinksTitle {
+    background-color: #595858 !important;
+    color: white !important;
+    margin: 10px !important;
+    padding: 0px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    border: solid white;
+    border-radius: 20px;
+    font-weight: bold !important;
+    text-decoration: none;
+}
+
+.navDropdownLinks {
+    background-color: #595858 !important;
+    font-weight: bold !important;
+
+}
+
+.navLinks:hover {
+    color: #595858 !important;
+    background-color: white !important;
+    transform: scale(1.05)
+}
+
+.navSideLinks {
+    display: none !important;
+    color: white !important;
+    font-weight: bold !important;
+    border: solid white;
+    border-radius: 20px;
+    margin: 10px;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    text-decoration: none;
+}
+
+.dropdown-menu {
+    margin: 0px !important;
+    border: 0px !important;
+    padding: 0px !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+.logOut {
+    display: none !important;
+    color: white !important;
+    font-weight: bold !important;
+    text-align: center !important;
+}
+
+.logOut:hover {
+    text-decoration: underline !important;
+}
+
+.userNameLink {
+    color: #d89841 !important;
+    font-weight: bold !important;
+    border: solid #d89841;
+    border-radius: 20px;
+    margin: 10px;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    text-decoration: none;
+}
+
+.userNameLink:hover {
+    transform: scale(1.05);
+    background-color: #d89841 !important;
+    color: #595858 !important;
+
+}
+
+.smallScreen {
+    display: none !important;
+    background-color: #595858 !important;
+    cursor: pointer !important;
+}
+
+.bigScreen {
+    cursor: pointer !important;
+}
+
+.navActive {
+    text-decoration: underline !important;
+}
+
+@media screen and (max-width: 576px) {
+    #inicioNavLink {
+        display: none;
+    }
+
+    .navSideLinks {
+        display: inherit !important;
+    }
+
+    .logOut {
+        display: inherit !important;
+    }
+
+    .smallScreen {
+        display: inherit !important;
+    }
+
+    .bigScreen {
+        display: none !important;
+    }
+
+    .navLinks {
+        width: 100%;
+    }
+
+    .userNameLink {
+        width: 100%;
+    }
+
+    .containerNavLink {
+        width: 100%;
+    }
+
+    .navDropdownLinksTitle {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width:577px) and (max-width: 766px) {
+    #inicioNavLink {
+        display: none;
+    }
+
+    .navSideLinks {
+        display: inherit !important;
+    }
+
+    .logOut {
+        display: inherit !important;
+    }
+
+    .smallScreen {
+        display: none !important;
+    }
+
+    .bigScreen {
+        display: none !important;
+    }
+
+    .navLinks {
+        width: 100%;
+    }
+
+    .userNameLink {
+        width: 100%;
+    }
+
+    .containerNavLink {
+        width: 100%;
+    }
+
+    .navDropdownLinksTitle {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width:767px) and (max-width: 991px) {
+    #inicioNavLink {
+        display: none;
+    }
+
+    .navSideLinks {
+        display: inherit !important;
+    }
+
+    .logOut {
+        display: inherit !important;
+    }
+
+    .smallScreen {
+        display: none !important;
+    }
+
+    .bigScreen {
+        display: none !important;
+    }
+
+    .navLinks {
+        width: 80%;
+    }
+
+    .userNameLink {
+        width: 80%;
+    }
+
+    .containerNavLink {
+        width: 80%;
+    }
+
+    .navDropdownLinksTitle {
+        width: 80%;
+    }
+}
+
+@media screen and (min-width:992px) and (max-width: 1400px) {
+    .navLinks {
+        text-align: center;
+    }
+
+    .bigScreen {
+        padding-top: 20px !important;
+    }
+
+    .userNameLink {
+        text-align: center;
+    }
+}

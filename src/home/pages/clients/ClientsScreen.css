@@ -1,0 +1,19 @@
+.buttonAddClient {
+    font-weight: bold !important;
+    border: solid #5f3c23;
+    border-radius: 20px;
+    margin: 5px;
+    padding: 3px !important;
+    text-decoration: none;
+    width: 100%;
+    color: white !important;
+    background-color: #5f3c23 !important;
+}
+
+.buttonAddClient:hover {
+    transform: scale(1.05)
+}
+
+.clientTitle {
+    color: #5f3c23 !important;
+}

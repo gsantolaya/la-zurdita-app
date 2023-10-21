@@ -1,0 +1,65 @@
+.footerContainer {
+    background-color: #595858;
+    color: white;
+    text-align: center;
+}
+
+.socialMedia {
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+}
+
+.socialMedia:hover {
+    transform: scale(1.1);
+    color: white;
+}
+
+.appLogoFooter {
+    width: 100px;
+    height: 100px;
+}
+
+@media screen and (max-width: 576px) {
+    #logoContainer {
+        display: none !important;
+    }
+
+    #socialMediaContainer {
+        display: none !important;
+    }
+
+    .iconFooter>svg {
+        display: none;
+    }
+}
+
+@media screen and (min-width:577px) and (max-width: 766px) {
+    #logoContainer {
+        display: none !important;
+    }
+
+    #socialMediaContainer {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width:767px) and (max-width: 991px) {
+    #logoContainer {
+        display: none !important;
+    }
+
+    #socialMediaContainer {
+        display: inherit !important;
+    }
+}
+
+@media screen and (min-width:992px) and (max-width: 1400px) {
+    #logoContainer {
+        display: inherit !important;
+    }
+
+    #socialMediaContainer {
+        display: inherit !important;
+    }
+}
