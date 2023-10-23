@@ -20,7 +20,6 @@ export function NavbarMenu() {
     const decodedToken = tokenIsValid()
 
     const navigate = useNavigate()
-    console.log(decodedToken)
     const handleNavClick = () => {
         if (decodedToken) {
             navigate('/home')
