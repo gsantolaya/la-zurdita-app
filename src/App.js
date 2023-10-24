@@ -2,7 +2,7 @@ import './App.css'
 import axios from "axios"
 import { AppRouter } from './router/AppRouter'
 
-axios.defaults.baseURL = process.env.LAZURDITA_APP_API_URL || "https://node-la-zurdita-app-api.onrender.com/api"
+axios.defaults.baseURL = process.env.REACT_APP_LAZURDITA_API_URL
 
 function App() {
   return (
