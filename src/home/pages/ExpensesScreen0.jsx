@@ -1,9 +1,9 @@
 import React from 'react'
 import './HomeScreen.css'
 import { SideMenu } from '../components/SideMenu'
-import { Welcome } from '../components/Welcome'
+import { ExpensesScreen } from './expenses/ExpensesScreen'
 
-export const HomeScreen = () => {
+export const ExpensesScreen0 = () => {
     return (
         <>
             <div className='d-flex'>
@@ -11,7 +11,7 @@ export const HomeScreen = () => {
                     <SideMenu />
                 </div>
                 <div className='col-12 col-sm-8 col-md-9 col-lg-10 mainContainer'>
-                    <Welcome />
+                    <ExpensesScreen />
                 </div>
             </div>
         </>

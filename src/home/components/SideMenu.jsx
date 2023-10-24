@@ -15,21 +15,21 @@ export function SideMenu() {
 
     return (
         <Nav className="flex-column sideMenuContainer col-12">
-            <Nav.Link className={`sideMenuLinks ${isActive('/home/products')}`} href="/home/products">
+            <Nav.Link className={`sideMenuLinks ${isActive('/products')}`} href="/products">
                 Productos
             </Nav.Link>
-            <Nav.Link className={`sideMenuLinks ${isActive('/home/clients')}`} href="/home/clients">
+            <Nav.Link className={`sideMenuLinks ${isActive('/clients')}`} href="/clients">
                 Clientes
             </Nav.Link>
-            <Nav.Link className={`sideMenuLinks ${isActive('/home/orders')}`} href="/home/orders">
+            <Nav.Link className={`sideMenuLinks ${isActive('/orders')}`} href="/orders">
                 Pedidos
             </Nav.Link>
             {decodedToken.isAdmin && (
                 <>
-                    <Nav.Link className={`sideMenuLinks ${isActive('/home/sales')}`} href="/home/sales">
+                    <Nav.Link className={`sideMenuLinks ${isActive('/sales')}`} href="/sales">
                         Ventas
                     </Nav.Link>
-                    <Nav.Link className={`sideMenuLinks ${isActive('/home/expenses')}`} href="/home/expenses">
+                    <Nav.Link className={`sideMenuLinks ${isActive('/expenses')}`} href="/expenses">
                         Gastos
                     </Nav.Link>
                 </>
