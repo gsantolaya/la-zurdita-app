@@ -9,6 +9,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"
 import { tokenIsValid } from '../../utils/TokenIsValid'
 import axios from "axios"
 import Toast from 'react-bootstrap/Toast'
+import ToastContainer from 'react-bootstrap/ToastContainer'
 import "./RegisterScreen.css"
 
 export const RegisterScreen = () => {
@@ -201,7 +202,7 @@ export const RegisterScreen = () => {
                     </p>
                 </Form>
             </div>
-            <div className="position-fixed bottom-0 end-0 p-3">
+            <ToastContainer className="p-3" style={{ position: 'fixed', zIndex: 1, bottom: '20px', right: '20px', }} >
                 <Toast show={showConfirmationRegisterToast} onClose={handleConfirmationRegisterToastClose} delay={3000} autohide>
                     <Toast.Header>
                         <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
@@ -210,8 +211,6 @@ export const RegisterScreen = () => {
                     </Toast.Header>
                     <Toast.Body className='text-dark'>Registro exitoso, ya puede iniciar sesión.</Toast.Body>
                 </Toast>
-            </div>
-            <div className="position-fixed bottom-0 end-0 p-3">
                 <Toast show={showErrorRegisterToast} onClose={handleErrorRegisterToastClose} delay={3000} autohide>
                     <Toast.Header>
                         <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
@@ -220,7 +219,7 @@ export const RegisterScreen = () => {
                     </Toast.Header>
                     <Toast.Body className='text-dark'>No se ha podido completar el registro, intente nuevamente.</Toast.Body>
                 </Toast>
-            </div>
-        </div>
+            </ToastContainer>
+        </div >
     )
 }

@@ -53,13 +53,13 @@ export function NavbarMenu() {
                         {
                             store.tokenValid && (
                                 <NavDropdown className="navDropdownLinksTitle smallScreen" id="nav-dropdown-dark-example" title="Nav" menuVariant="dark">
-                                    <NavDropdown.Item className={`navDropdownLinks ${isActive('/home/products')}`} href="/home/products">Productos</NavDropdown.Item>
-                                    <NavDropdown.Item className={`navDropdownLinks ${isActive('/home/clients')}`} href="/home/clients">Clientes</NavDropdown.Item>
-                                    <NavDropdown.Item className={`navDropdownLinks ${isActive('/home/orders')}`} href="/home/orders">Pedidos</NavDropdown.Item>
+                                    <NavDropdown.Item className={`navDropdownLinks ${isActive('/products')}`} href="/products">Productos</NavDropdown.Item>
+                                    <NavDropdown.Item className={`navDropdownLinks ${isActive('/clients')}`} href="/clients">Clientes</NavDropdown.Item>
+                                    <NavDropdown.Item className={`navDropdownLinks ${isActive('/orders')}`} href="/orders">Pedidos</NavDropdown.Item>
                                     {decodedToken.isAdmin && (
                                         <>
-                                            <NavDropdown.Item className={`navDropdownLinks ${isActive('/home/sales')}`} href="/home/sales">Ventas</NavDropdown.Item>
-                                            <NavDropdown.Item className={`navDropdownLinks ${isActive('/home/expenses')}`} href="/home/expenses">Gastos</NavDropdown.Item>
+                                            <NavDropdown.Item className={`navDropdownLinks ${isActive('/sales')}`} href="/sales">Ventas</NavDropdown.Item>
+                                            <NavDropdown.Item className={`navDropdownLinks ${isActive('/expenses')}`} href="/expenses">Gastos</NavDropdown.Item>
                                         </>
                                     )}
                                 </NavDropdown>
@@ -67,7 +67,7 @@ export function NavbarMenu() {
                         }
                         {decodedToken ? (
                             <>
-                                <Nav.Link className="userNameLink text-center" href="/home/users"><FaUserAlt /> {decodedToken.firstName} {decodedToken.lastName}</Nav.Link>
+                                <Nav.Link className="userNameLink text-center" href="/users"><FaUserAlt /> {decodedToken.firstName} {decodedToken.lastName}</Nav.Link>
                                 <Nav.Link className="logOut ms-auto" href="/home" onClick={handleLogout}>Cerrar Sesión</Nav.Link>
                             </>
                         ) : (
