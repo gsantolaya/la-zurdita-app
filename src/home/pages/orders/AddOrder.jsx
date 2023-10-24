@@ -339,6 +339,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
         <div>
           <h3><b>Fecha:</b> ${data.date}</h3>
           <h3><b>Cliente:</b> ${clientFullName}</h3>
+          <h3><b>Domicilio del Cliente:</b> ${selectedClient.address}</h3>
         </div>
       </div>
     `
