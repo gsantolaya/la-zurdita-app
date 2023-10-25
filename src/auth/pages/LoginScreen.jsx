@@ -27,10 +27,19 @@ export const LoginScreen = () => {
                 navigate("/home")
             })
             .catch((err) => {
-                setLoginError("Usuario o contraseña incorrectos")
+                if (err.response && err.response.status === 400) {
+                    if (err.response.data.mensaje === "Usuario no activado") {
+                        setLoginError("El usuario no está activado")
+                    } else {
+                        setLoginError("Usuario o contraseña incorrectos")
+                    }
+                } else {
+                    setLoginError("Error en el servidor. Por favor, inténtelo de nuevo más tarde.")
+                }
                 console.log(err)
             })
     }
+    
 
     useEffect(() => {
         if (tokenIsValid()) {
