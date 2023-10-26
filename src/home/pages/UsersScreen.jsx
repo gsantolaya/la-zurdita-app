@@ -233,7 +233,7 @@ export const UsersScreen = () => {
                 {users.map((user) => {
                   const isCurrentUser = user.email === decodedToken.email;
                   const isEmailAdmin = user.email === process.env.EMAIL_ADMIN;
-
+console.log(isEmailAdmin)
                   if (isCurrentUser || isEmailAdmin) {
                     return null;
                   }
