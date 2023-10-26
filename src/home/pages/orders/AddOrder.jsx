@@ -134,12 +134,46 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
     })
   }
 
-
+  const checkStockSufficiency = async (data) => {
+    for (const productField of additionalProductFields) {
+      const productId = data[`product${productField.id}`];
+      const amount = parseFloat(data[`amount${productField.id}`]);
+      const amountDescription = data[`amountDescription${productField.id}`];
+  
+      // Consulta el producto actual en la base de datos para obtener su stock actual
+      const response = await axios.get(`/products/${productId}`, {
+        headers: {
+          "access-token": store.token
+        }
+      });
+  
+      const product = response.data;
+      const currentStock = product.stock;
+  
+      // Ajusta la cantidad si la descripción es "docena"
+      const adjustedAmount = amountDescription === "docena" ? amount * 12 : amount;
+  
+      // Compara el stock actual con la cantidad solicitada
+      if (currentStock < adjustedAmount) {
+        // Stock insuficiente, muestra una alerta y detén la función
+        alert(`Stock insuficiente para el producto: ${product.type}`);
+        return false;
+      }
+    }
+    return true;
+  };
+  
   // GUARDAR VENTA EN LA BASE DE DATOS
   const handleAddSaleFormSubmit = async (data) => {
     if (additionalProductFields.length === 0) {
-      alert("Debes agregar al menos un producto.")
-      return
+      alert("Debes agregar al menos un producto.");
+      return;
+    }
+  
+    // Verifica el stock antes de continuar
+    const stockSufficient = await checkStockSufficiency(data);
+    if (!stockSufficient) {
+      return;
     }
 
     try {
@@ -426,9 +460,9 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
 
           <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleSubmit(handleAddSaleFormSubmit)}>
             <div className='col-12 row my-2'>
-              <h6>Información General:</h6>
+              <h5 className='modalLabel'>Información General:</h5>
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicDate">
-                <Form.Label>Fecha:</Form.Label>
+                <Form.Label className='modalLabel'>Fecha:</Form.Label>
                 <Form.Control
                   type="date"
                   name="date"
@@ -440,7 +474,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                 />
               </Form.Group>
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicClient">
-                <Form.Label>Cliente:</Form.Label>
+                <Form.Label className='modalLabel'>Cliente:</Form.Label>
                 <Form.Select as="select" name="client" {...register("client", { required: true })} onChange={handleClientChange}>
                   <option value="">Selecciona un cliente</option>
                   {clients.map((client) => (
@@ -451,7 +485,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                 </Form.Select>
               </Form.Group>
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicType">
-                <Form.Label>Tipo de venta:</Form.Label>
+                <Form.Label className='modalLabel'>Tipo de venta:</Form.Label>
                 <Form.Select as="select" name="type"  {...register("type", { required: true })}>
                   <option value="">Seleccione una opción</option>
                   <option value="mayorista">Mayorista</option>
@@ -460,11 +494,11 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
               </Form.Group>
             </div>
             <div className='col-12 row my-2'>
-              <h6>Productos:</h6>
+              <h5 className='modalLabel'>Productos:</h5>
               {additionalProductFields.map((field, index) => (
                 <div key={field.id} className='col-12 row my-2 align-items-center justify-content-between'>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-3" controlId={`formBasicDescription${field.id}`} onChange={handleProductChange}>
-                    <Form.Label>Variedad:</Form.Label>
+                    <Form.Label className='modalLabel'>Variedad:</Form.Label>
                     <Form.Select
                       as="select"
                       name={`product${field.id}`}
@@ -487,9 +521,8 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                       ))}
                     </Form.Select>
                   </Form.Group>
-
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-1" controlId={`formBasicAmount${field.id}`}>
-                    <Form.Label>Cantidad</Form.Label>
+                    <Form.Label className='modalLabel'>Cantidad:</Form.Label>
                     <Form.Control
                       type="number"
                       maxLength={5}
@@ -517,7 +550,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                     )}
                   </Form.Group>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-3" controlId={`formBasicAmountDescription${field.id}`}>
-                    <Form.Label>Descripción Cantidad:</Form.Label>
+                    <Form.Label className='modalLabel'>Descripción cantidad:</Form.Label>
                     <Form.Select
                       as="select"
                       name={`amountDescription${field.id}`}
@@ -533,7 +566,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-2" controlId={`formBasicStatus${field.id}`}>
-                    <Form.Label>Descripción Adicional:</Form.Label>
+                    <Form.Label className='modalLabel'>Descripción adicional:</Form.Label>
                     <Form.Select as="select" name={`productStatus${field.id}`} {...register(`productStatus${field.id}`, { required: true })}>
                       <option value="">Seleccione una opción</option>
                       <option value="horneadas">Horneadas</option>
@@ -541,7 +574,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-2" controlId={`formBasicPayment${field.id}`}>
-                    <Form.Label>Precio unitario</Form.Label>
+                    <Form.Label className='modalLabel'>Precio unitario:</Form.Label>
                     <Form.Control
                       type="number"
                       min="0"
@@ -564,17 +597,17 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                       <span className="authSpan">Debe ser un número positivo</span>
                     )}
                   </Form.Group>
-                  <Button className='buttonsFormAddSale my-2 col-1' variant="danger" type="button" onClick={() => handleRemoveProductField(field.id)} style={{ width: '40px', height: '40px' }}>
+                  <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemoveProductField(field.id)} style={{ width: '40px', height: '40px' }}>
                     <FaTrashAlt />
                   </Button>
-                  <h6>Subtotal: ${subtotals[field.id]}</h6>
+                  <h6 className='modalLabel'>Subtotal: ${subtotals[field.id]}</h6>
                 </div>
               ))}
               <Button className='buttonsFormAddSale w-25' variant="secondary" type="button" onClick={handleAddProductField}>
                 Agregar
               </Button>
             </div>
-            <h4>Total: ${total}</h4>
+            <h4 className='modalLabel'>Total: ${total}</h4>
             <Modal.Footer className="mt-3 col-12">
               <Button className='buttonsFormAddSale m-2 w-100' variant="secondary" type="submit">
                 Agregar Pedido

@@ -56,61 +56,61 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                 <Modal.Body className='modalBody'>
                     <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleSubmit(handleAddExpenseFormSubmit)}>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicDate">
-                            <Form.Label>Fecha:</Form.Label>
+                            <Form.Label className='modalLabel'>Fecha:</Form.Label>
                             <Form.Control type="date" name="date"
                                 {...register("date", { required: true })} max={new Date().toISOString().split('T')[0]} />
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicVoucherNumber">
-                            <Form.Label>Número de comprobante</Form.Label>
+                            <Form.Label className='modalLabel'>Nro. de comprobante:</Form.Label>
                             <Form.Control type="number" name="voucherNumber" placeholder="Ingrese el número"
                                 {...register("voucherNumber", { required: true })}
                             />
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicProvider">
-                            <Form.Label>Proveedor</Form.Label>
+                            <Form.Label className='modalLabel'>Proveedor:</Form.Label>
                             <Form.Control type="text" name="provider" placeholder="Ingrese el proveedor"
                                 {...register("provider", { required: true })}
                             />
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicAmount">
-                            <Form.Label>Cantidad</Form.Label>
+                            <Form.Label className='modalLabel'>Cantidad:</Form.Label>
                             <Form.Control type="number" name="amount" placeholder="Ingrese la cantidad"
                                 {...register("amount", { required: true })}
                             />
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicDescription">
-                            <Form.Label>Descripción</Form.Label>
+                            <Form.Label className='modalLabel'>Descripción:</Form.Label>
                             <Form.Control type="text" name="description" placeholder="Ingrese la descripción"
                                 {...register("description", { required: true })}
                             />
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicAdditionalDescription">
-                            <Form.Label>Descripción Adicional</Form.Label>
+                            <Form.Label className='modalLabel'>Descripción Adicional:</Form.Label>
                             <Form.Control type="text" name="additionalDescription" placeholder="Ingrese la descripción adicional"
                                 {...register("additionalDescription", { required: true })}
                             />
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicUnitPrice">
-                            <Form.Label>Precio Unitario</Form.Label>
+                            <Form.Label className='modalLabel'>Precio Unitario:</Form.Label>
                             <Form.Control type="number" name="unitPrice" placeholder="Ingrese el precio"
                                 {...register("unitPrice", { required: true })}
                             />
                         </Form.Group>
-                        <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWayToPay">
-                            <Form.Label>Forma de pago:</Form.Label>
+                        <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
+                            <Form.Label className='modalLabel'>Pago:</Form.Label>
+                            <Form.Control type="number" maxLength={10} name="payment" placeholder="Ingrese la cantidad"
+                                {...register("payment", { required: true })}
+                            />
+                            {errors?.payment && (<span className="authSpan">Este campo es requerido</span>)}
+                        </Form.Group>
+                        <Form.Group className="formFields m-2 col-10" controlId="formBasicWayToPay">
+                            <Form.Label className='modalLabel'>Forma de pago:</Form.Label>
                             <Form.Select as="select" name="wayToPay" {...register("wayToPay", { required: true })}>
                                 <option value="">Seleccione una opción</option>
                                 <option value="efectivo">Efectivo</option>
                                 <option value="transferencia">MercadoPago</option>
                                 <option value="transferencia">Transferencia</option>
                             </Form.Select>
-                        </Form.Group>
-                        <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
-                            <Form.Label>Pago</Form.Label>
-                            <Form.Control type="number" maxLength={10} name="payment" placeholder="Ingrese la cantidad"
-                                {...register("payment", { required: true })}
-                            />
-                            {errors?.payment && (<span className="authSpan">Este campo es requerido</span>)}
                         </Form.Group>
                         <Modal.Footer className="mt-3 col-12">
                             <Button className='buttonsFormAddExpense m-2 w-100' variant="secondary" type="submit">

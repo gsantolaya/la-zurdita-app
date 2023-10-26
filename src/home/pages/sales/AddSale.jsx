@@ -241,12 +241,11 @@ export const AddSale = ({ show, onHide, fetchSales }) => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className='modalBody'>
-
           <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleSubmit(handleAddSaleFormSubmit)}>
             <div className='col-12 row my-2'>
               <h6>Información General:</h6>
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicDate">
-                <Form.Label>Fecha:</Form.Label>
+                <Form.Label className='modalLabel'>Fecha:</Form.Label>
                 <Form.Control
                   type="date"
                   name="date"
@@ -257,7 +256,7 @@ export const AddSale = ({ show, onHide, fetchSales }) => {
                 />
               </Form.Group>
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicClient">
-                <Form.Label>Cliente:</Form.Label>
+                <Form.Label className='modalLabel'>Cliente:</Form.Label>
                 <Form.Select as="select" name="client" {...register("client", { required: true })} onChange={handleClientChange}>
                   <option value="">Selecciona un cliente</option>
                   {clients.map((client) => (
@@ -268,7 +267,7 @@ export const AddSale = ({ show, onHide, fetchSales }) => {
                 </Form.Select>
               </Form.Group>
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicType">
-                <Form.Label>Tipo de venta:</Form.Label>
+                <Form.Label className='modalLabel'>Tipo de venta:</Form.Label>
                 <Form.Select as="select" name="type"  {...register("type", { required: true })}>
                   <option value="">Seleccione una opción</option>
                   <option value="mayorista">Mayorista</option>
@@ -282,7 +281,7 @@ export const AddSale = ({ show, onHide, fetchSales }) => {
               {additionalProductFields.map((field, index) => (
                 <div key={field.id} className='col-12 row my-2 align-items-center justify-content-between'>
                   <Form.Group className="formFields my-2 px-2 col-3" controlId={`formBasicDescription${field.id}`} onChange={handleProductChange}>
-                    <Form.Label>Variedad:</Form.Label>
+                    <Form.Label className='modalLabel'>Variedad:</Form.Label>
                     <Form.Select
                       as="select"
                       name={`product${field.id}`}
@@ -305,9 +304,8 @@ export const AddSale = ({ show, onHide, fetchSales }) => {
                       ))}
                     </Form.Select>
                   </Form.Group>
-
                   <Form.Group className="formFields my-2 px-2 col-1" controlId={`formBasicAmount${field.id}`}>
-                    <Form.Label>Cantidad</Form.Label>
+                    <Form.Label className='modalLabel'>Cantidad</Form.Label>
                     <Form.Control
                       type="number"
                       maxLength={5}
@@ -334,9 +332,8 @@ export const AddSale = ({ show, onHide, fetchSales }) => {
                       <span className="authSpan">Debe ser un número positivo</span>
                     )}
                   </Form.Group>
-
                   <Form.Group className="formFields my-2 px-2 col-3" controlId={`formBasicAmountDescription${field.id}`}>
-                    <Form.Label>Descripción Cantidad:</Form.Label>
+                    <Form.Label className='modalLabel'>Descripción Cantidad:</Form.Label>
                     <Form.Select
                       as="select"
                       name={`amountDescription${field.id}`}
@@ -350,18 +347,16 @@ export const AddSale = ({ show, onHide, fetchSales }) => {
                       <option value="unidad" disabled={typeValue === 'mayorista'}>Unidad</option>
                     </Form.Select>
                   </Form.Group>
-
                   <Form.Group className="formFields my-2 px-2 col-2" controlId={`formBasicStatus${field.id}`}>
-                    <Form.Label>Descripción Adicional:</Form.Label>
+                    <Form.Label className='modalLabel'>Descripción Adicional:</Form.Label>
                     <Form.Select as="select" name={`productStatus${field.id}`} {...register(`productStatus${field.id}`, { required: true })}>
                       <option value="">Seleccione una opción</option>
                       <option value="horneadas">Horneadas</option>
                       <option value="congeladas">Congeladas</option>
                     </Form.Select>
                   </Form.Group>
-
                   <Form.Group className="formFields my-2 px-2 col-2" controlId={`formBasicPayment${field.id}`}>
-                    <Form.Label>Precio unitario</Form.Label>
+                    <Form.Label className='modalLabel'>Precio unitario</Form.Label>
                     <Form.Control
                       type="number"
                       name={`unitPrice${field.id}`}
@@ -379,12 +374,10 @@ export const AddSale = ({ show, onHide, fetchSales }) => {
                     />
                     {errors?.unitPrice && (<span className="authSpan">Este campo es requerido</span>)}
                   </Form.Group>
-
                   <Button className='buttonsFormAddSale my-2 col-1' variant="danger" type="button" onClick={() => handleRemoveProductField(field.id)} style={{ width: '40px', height: '40px' }}>
                     <FaTrashAlt />
                   </Button>
-
-                  <h6>Subtotal: ${subtotals[field.id]}</h6>
+                  <h6 className='modalLabel'>Subtotal: ${subtotals[field.id]}</h6>
                 </div>
               ))}
 

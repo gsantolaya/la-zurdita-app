@@ -56,7 +56,7 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                 <Modal.Body className='modalBody'>
                     <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleSubmit(handleAddProductFormSubmit)}>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicType">
-                            <Form.Label>Variedad:</Form.Label>
+                            <Form.Label className='modalLabel'>Variedad:</Form.Label>
                             <Form.Control
                                 type="text"
                                 maxLength={30}
@@ -67,11 +67,11 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                             {errors.type && (<span className="authSpan">Este campo es requerido</span>)}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicUnitPrice">
-                            <Form.Label>Precio por unidad:</Form.Label>
+                            <Form.Label className='modalLabel'>Precio por unidad:</Form.Label>
                             <Form.Control
                                 type="number"
                                 min="0"
-                                step="0.01" // Added step for decimal values
+                                step="0.01"
                                 name="unitPrice"
                                 placeholder="Ingrese el precio"
                                 {...register("unitPrice", { required: true, min: 0 })}
@@ -79,11 +79,11 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                             {errors.unitPrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicRetailPrice">
-                            <Form.Label>Precio Minorista:</Form.Label>
+                            <Form.Label className='modalLabel'>Precio Minorista:</Form.Label>
                             <Form.Control
                                 type="number"
                                 min="0"
-                                step="0.01" // Added step for decimal values
+                                step="0.01"
                                 name="retailPrice"
                                 placeholder="Ingrese el precio"
                                 {...register("retailPrice", { required: true, min: 0 })}
@@ -91,11 +91,11 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                             {errors.retailPrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWholesalePrice">
-                            <Form.Label>Precio Mayorista:</Form.Label>
+                            <Form.Label className='modalLabel'>Precio Mayorista:</Form.Label>
                             <Form.Control
                                 type="number"
                                 min="0"
-                                step="0.01" // Added step for decimal values
+                                step="0.01"
                                 name="wholesalePrice"
                                 placeholder="Ingrese el precio"
                                 {...register("wholesalePrice", { required: true, min: 0 })}
@@ -103,7 +103,7 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                             {errors.wholesalePrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicStock">
-                            <Form.Label>Stock:</Form.Label>
+                            <Form.Label className='modalLabel'>Stock:</Form.Label>
                             <Form.Control
                                 type="number"
                                 min="0"

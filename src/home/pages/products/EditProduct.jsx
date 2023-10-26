@@ -78,7 +78,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                     {selectedProduct ? (
                         <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleSubmit(handleEditProductFormSubmit)}>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicType">
-                                <Form.Label>Variedad:</Form.Label>
+                                <Form.Label className='modalLabel'>Variedad:</Form.Label>
                                 <Form.Control
                                     type="text"
                                     maxLength={30}
@@ -90,7 +90,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                 {errors.type && (<span className="authSpan">Este campo es requerido</span>)}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicUnitPrice">
-                                <Form.Label>Precio por unidad:</Form.Label>
+                                <Form.Label className='modalLabel'>Precio por unidad:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     min="0"
@@ -103,7 +103,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                 {errors.unitPrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicRetailPrice">
-                                <Form.Label>Precio minorista:</Form.Label>
+                                <Form.Label className='modalLabel'>Precio minorista:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     min="0"
@@ -116,7 +116,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                 {errors.retailPrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWholesalePrice">
-                                <Form.Label>Precio mayorista:</Form.Label>
+                                <Form.Label className='modalLabel'>Precio mayorista:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     min="0"
@@ -129,7 +129,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                 {errors.wholesalePrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
                             </Form.Group>
                             <Form.Group className="formFields m-2  mt-3 col-10 d-flex justify-content-center align-items-center" controlId="formBasicStock">
-                                <Form.Label>Stock actual:</Form.Label>
+                                <Form.Label className='modalLabel'>Stock actual:</Form.Label>
                                 <Form.Control
                                 className='w-50 mx-3'
                                     type="number"
@@ -142,7 +142,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                 {errors.stock && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicAddStock">
-                                <Form.Label>Agregar Stock:</Form.Label>
+                                <Form.Label className='modalLabel'>Agregar Stock:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     min="0"
@@ -152,7 +152,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                 />
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicSubtractStock">
-                                <Form.Label>Restar Stock:</Form.Label>
+                                <Form.Label className='modalLabel'>Restar Stock:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     min="0"

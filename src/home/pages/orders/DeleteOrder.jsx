@@ -69,7 +69,7 @@ export const DeleteOrder = ({ show, onHide, fetchSales, selectedSale, products }
                     <Modal.Title className='modalTitle'><strong>Confirmar Eliminación</strong></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='modalBody py-4'>
-                    ¿Estás seguro de que deseas eliminar este pedido?
+                    <b>¿Estás seguro de que deseas eliminar este pedido?</b>
                 </Modal.Body>
                 <Modal.Footer className='modalBody'>
                     <Button variant="secondary" onClick={onHide}>

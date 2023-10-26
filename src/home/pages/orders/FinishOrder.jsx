@@ -98,8 +98,8 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                 <Modal.Body className='modalBody'>
 
                     <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleSubmit(handleFinishOrderFormSubmit)}>
-                        <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWayToPay">
-                            <Form.Label>Forma de pago:</Form.Label>
+                        <Form.Group className="formFields m-2 col-10" controlId="formBasicWayToPay">
+                            <Form.Label className='modalLabel'>Forma de pago:</Form.Label>
                             <Form.Select as="select" name="wayToPay" {...register("wayToPay", { required: true })}>
                                 <option value="">Selecciona una categoría</option>
                                 <option value="efectivo">Efectivo</option>
@@ -108,14 +108,14 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                             </Form.Select>
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
-                            <Form.Label>Pagado:</Form.Label>
+                            <Form.Label className='modalLabel'>Pagado:</Form.Label>
                             <Form.Control type="number" maxLength={20} name="payment" placeholder="0000"
                                 {...register("payment", { required: true })}
                             />
                             {errors?.payment && (<span className="authSpan">Este campo es requerido</span>)}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
-                            <Form.Label>Propina:</Form.Label>
+                            <Form.Label className='modalLabel'>Propina:</Form.Label>
                             <Form.Control type="number" maxLength={20} name="tip" placeholder="0000"
                                 {...register("tip", { required: false })}
                             />

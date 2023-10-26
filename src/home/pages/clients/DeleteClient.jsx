@@ -47,7 +47,7 @@ export const DeleteClient = ({ show, onHide, fetchClients, selectedClient }) => 
                     <Modal.Title className='modalTitle'><strong>Confirmar Eliminación</strong></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='modalBody py-4'>
-                    ¿Estás seguro de que deseas eliminar este cliente?
+                    <b>¿Estás seguro de que deseas eliminar este cliente?</b>
                 </Modal.Body>
                 <Modal.Footer className='modalBody'>
                     <Button variant="secondary" onClick={onHide}>

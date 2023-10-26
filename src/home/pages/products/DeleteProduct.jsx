@@ -47,7 +47,7 @@ export const DeleteProduct = ({ show, onHide, fetchProducts, selectedProduct }) 
                     <Modal.Title className='modalTitle'><strong>Confirmar Eliminación</strong></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='modalBody py-4'>
-                    ¿Estás seguro de que deseas eliminar este producto?
+                    <b>¿Estás seguro de que deseas eliminar este producto?</b>
                 </Modal.Body>
                 <Modal.Footer className='modalBody'>
                     <Button variant="secondary" onClick={onHide}>

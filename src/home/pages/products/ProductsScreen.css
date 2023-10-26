@@ -21,6 +21,23 @@
     color: white !important;
 }
 
+.modalHeader {
+    background-color: #5f3c23;
+}
+
+.modalBody {
+    background-color: #CDCFC0 !important;
+}
+
+.modalTitle {
+    color: white !important;
+    padding-left: 20%;
+}
+.modalLabel {
+    color: #5f3c23 !important;
+    font-weight: bolder;
+}
+
 @media screen and (max-width: 576px) {
     .scrollable-x-table {
         overflow-x: scroll !important;

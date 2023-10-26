@@ -77,7 +77,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                     {selectedClient ? (
                         <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleSubmit(handleEditClientFormSubmit)}>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicFirstName">
-                                <Form.Label>Nombre</Form.Label>
+                                <Form.Label className='modalLabel'>Nombre:</Form.Label>
                                 <Form.Control type="text" maxLength={30} name="firstName" placeholder="Ingrese el nombre"
                                     {...register("firstName", { required: true })}
                                     defaultValue={selectedClient.firstName}
@@ -85,7 +85,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                 {errors?.firstName && (<span className="authSpan">Este campo es requerido</span>)}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicLastName">
-                                <Form.Label>Apellido</Form.Label>
+                                <Form.Label className='modalLabel'>Apellido:</Form.Label>
                                 <Form.Control type="text" maxLength={30} name="lastName" placeholder="Ingrese el apellido"
                                     {...register("lastName", { required: true })}
                                     defaultValue={selectedClient.lastName}
@@ -93,7 +93,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                 {errors?.lastName && (<span className="authSpan">Este campo es requerido</span>)}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicDescription">
-                                <Form.Label>Teléfono</Form.Label>
+                                <Form.Label className='modalLabel'>Teléfono:</Form.Label>
                                 <Form.Control type="number" maxLength={30} name="phone" placeholder="Ingrese un teléfono"
                                     {...register("phone", { required: true })}
                                     defaultValue={selectedClient.phone}
@@ -101,15 +101,15 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                 {errors?.phone && (<span className="authSpan">Este campo es requerido</span>)}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicValue">
-                                <Form.Label>Dirección</Form.Label>
+                                <Form.Label className='modalLabel'>Dirección:</Form.Label>
                                 <Form.Control type="text" maxLength={20} name="address" placeholder="Ingrese una dirección"
                                     {...register("address", { required: true })}
                                     defaultValue={selectedClient.address}
                                 />
                                 {errors?.address && (<span className="authSpan">Este campo es requerido</span>)}
                             </Form.Group>
-                            <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicGender">
-                                <Form.Label>Categoría:</Form.Label>
+                            <Form.Group className="formFields m-2 col-10" controlId="formBasicGender">
+                                <Form.Label className='modalLabel'>Categoría:</Form.Label>
                                 <Form.Select as="select" name="category" defaultValue={selectedClient.category} {...register("category", { required: true })} >
                                     <option value="">Selecciona una categoría</option>
                                     <option value="minorista">Minorista</option>

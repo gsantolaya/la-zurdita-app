@@ -48,7 +48,7 @@ export const DeleteExpense = ({ show, onHide, fetchExpenses, selectedExpense }) 
                     <Modal.Title className='modalTitle'><strong>Confirmar Eliminación</strong></Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='modalBody py-4'>
-                    ¿Estás seguro de que deseas eliminar este gasto?
+                    <b>¿Estás seguro de que deseas eliminar este gasto?</b>
                 </Modal.Body>
                 <Modal.Footer className='modalBody'>
                     <Button variant="secondary" onClick={onHide}>
