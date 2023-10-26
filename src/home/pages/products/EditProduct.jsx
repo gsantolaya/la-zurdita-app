@@ -38,13 +38,17 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
     // FUNCION PARA MODIFICAR UN PRODUCTO
     const handleEditProductFormSubmit = async (formData) => {
         try {
+            const stock = parseInt(formData.stock, 10) || 0;
+            const addStock = parseInt(formData.addStock, 10) || 0;
+            const subtractStock = parseInt(formData.subtractStock, 10) || 0;
             const updatedProduct = {
                 type: formData.type,
                 unitPrice: formData.unitPrice,
                 retailPrice: formData.retailPrice,
                 wholesalePrice: formData.wholesalePrice,
-                stock: formData.stock,
+                stock: stock + addStock - subtractStock,
             }
+
             const config = {
                 headers: {
                     "access-token": store.token,
@@ -124,9 +128,10 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                 />
                                 {errors.wholesalePrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
                             </Form.Group>
-                            <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicStock">
-                                <Form.Label>Stock:</Form.Label>
+                            <Form.Group className="formFields m-2  mt-3 col-10 d-flex justify-content-center align-items-center" controlId="formBasicStock">
+                                <Form.Label>Stock actual:</Form.Label>
                                 <Form.Control
+                                className='w-50 mx-3'
                                     type="number"
                                     min="0"
                                     name="stock"
@@ -135,6 +140,26 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                     defaultValue={selectedProduct.stock}
                                 />
                                 {errors.stock && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
+                            </Form.Group>
+                            <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicAddStock">
+                                <Form.Label>Agregar Stock:</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    min="0"
+                                    name="addStock"
+                                    placeholder="0"
+                                    {...register('addStock', { min: 0 })}
+                                />
+                            </Form.Group>
+                            <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicSubtractStock">
+                                <Form.Label>Restar Stock:</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    min="0"
+                                    name="subtractStock"
+                                    placeholder="0"
+                                    {...register('subtractStock', { min: 0 })}
+                                />
                             </Form.Group>
                             <Modal.Footer className="mt-3 col-12">
                                 <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" type="submit">
