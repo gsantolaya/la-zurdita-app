@@ -25,8 +25,8 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
     const handleOnHideModal = () => {
         reset()
         onHide()
-      }
-    
+    }
+
     //FUNCION PARA AGREGAR UN PRODUCTO
     const handleAddProductFormSubmit = async (data) => {
         try {
@@ -66,9 +66,17 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 maxLength={30}
                                 name="type"
                                 placeholder="Ingrese la variedad"
-                                {...register("type", { required: true })}
+                                {...register("type", {
+                                    required: true,
+                                    pattern: /^[A-Za-z\s]+$/
+                                })}
                             />
-                            {errors.type && (<span className="authSpan">Este campo es requerido</span>)}
+                            {errors.type && errors.type.type === "required" && (
+                                <span className="validateSpan">Este campo es requerido.</span>
+                            )}
+                            {errors.type && errors.type.type === "pattern" && (
+                                <span className="validateSpan">Nombre inválido. Solo se permiten letras y espacios.</span>
+                            )}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicUnitPrice">
                             <Form.Label className='modalLabel'>Precio por unidad:</Form.Label>
@@ -78,9 +86,17 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 step="0.01"
                                 name="unitPrice"
                                 placeholder="Ingrese el precio"
-                                {...register("unitPrice", { required: "Este campo es requerido", min: { value: 0, message: "El precio debe ser un número positivo" } })}
+                                {...register("unitPrice", {
+                                    required: true,
+                                    pattern: /^\d+(\.\d{1,2})?$/
+                                })}
                             />
-                            {errors.unitPrice && (<span className="authSpan">{errors.unitPrice.message}</span>)}
+                            {errors.unitPrice && errors.unitPrice.type === "required" && (
+                                <span className="validateSpan">Este campo es requerido.</span>
+                            )}
+                            {errors.unitPrice && errors.unitPrice.type === "pattern" && (
+                                <span className="validateSpan">Ingrese un número válido (positivo con hasta 2 decimales).</span>
+                            )}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicRetailPrice">
                             <Form.Label className='modalLabel'>Precio Minorista:</Form.Label>
@@ -90,9 +106,17 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 step="0.01"
                                 name="retailPrice"
                                 placeholder="Ingrese el precio"
-                                {...register("retailPrice", { required: "Este campo es requerido", min: { value: 0, message: "El precio debe ser un número positivo" } })}
+                                {...register("retailPrice", {
+                                    required: true,
+                                    pattern: /^\d+(\.\d{1,2})?$/
+                                })}
                             />
-                            {errors.retailPrice && (<span className="authSpan">{errors.retailPrice.message}</span>)}
+                            {errors.retailPrice && errors.retailPrice.type === "required" && (
+                                <span className="validateSpan">Este campo es requerido.</span>
+                            )}
+                            {errors.retailPrice && errors.retailPrice.type === "pattern" && (
+                                <span className="validateSpan">Ingrese un número válido (positivo con hasta 2 decimales).</span>
+                            )}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWholesalePrice">
                             <Form.Label className='modalLabel'>Precio Mayorista:</Form.Label>
@@ -102,10 +126,17 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 step="0.01"
                                 name="wholesalePrice"
                                 placeholder="Ingrese el precio"
-                                {...register("wholesalePrice", { required: "Este campo es requerido", min: { value: 0, message: "El precio debe ser un número positivo" } })}
+                                {...register("wholesalePrice", {
+                                    required: true,
+                                    pattern: /^\d+(\.\d{1,2})?$/
+                                })}
                             />
-                            {errors.wholesalePrice && (<span className="authSpan">{errors.wholesalePrice.message}</span>)}
-                        </Form.Group>
+                            {errors.wholesalePrice && errors.wholesalePrice.type === "required" && (
+                                <span className="validateSpan">Este campo es requerido.</span>
+                            )}
+                            {errors.wholesalePrice && errors.wholesalePrice.type === "pattern" && (
+                                <span className="validateSpan">Ingrese un número válido (positivo con hasta 2 decimales).</span>
+                            )}                        </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicStock">
                             <Form.Label className='modalLabel'>Stock:</Form.Label>
                             <Form.Control
@@ -113,10 +144,13 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 min="0"
                                 name="stock"
                                 placeholder="Ingrese el stock"
-                                {...register("stock", { required: "Este campo es requerido", min: { value: 0, message: "El stock debe ser un número positivo" } })}
-                            />
-                            {errors.stock && (<span className="authSpan">{errors.stock.message}</span>)}
-                        </Form.Group>
+                                {...register("stock", {
+                                    required: true,
+                                    pattern: /^\d+(\.\d{1,2})?$/
+                                })}                            />
+                            {errors.stock && errors.stock.type === "required" && (
+                                <span className="validateSpan">Este campo es requerido.</span>
+                            )}                        </Form.Group>
                         <Modal.Footer className="mt-3 col-12">
                             <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" type="submit">
                                 Agregar Empanada

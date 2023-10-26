@@ -93,9 +93,9 @@ export const LoginScreen = () => {
                                     pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/,
                                 })}
                             />
-                            {errors?.password && <span className="loginSpan">Este campo es requerido. </span>}
+                            {errors?.password && <span className="validateSpan">Este campo es requerido. </span>}
                             {errors?.password && errors.password.type === "pattern" && (
-                                <span className="loginSpan">La contraseña debe tener al menos 6 caracteres, una mayúscula y un número.</span>
+                                <span className="validateSpan">La contraseña debe tener al menos 6 caracteres, una mayúscula y un número.</span>
                             )}
                         </div>
                         <div className="d-flex align-items-center" onClick={() => setShowPassword(!showPassword)}>

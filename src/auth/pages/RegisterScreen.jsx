@@ -85,10 +85,10 @@ export const RegisterScreen = () => {
                             <input className="registerInput d-block w-100" type="text" maxLength={20} placeholder="Ingrese su nombre" id="firstName" name="firstName"
                                 {...register("firstName", { required: true, minLength: 3 })} />
                             {errors?.firstName?.type === "required" && (
-                                <span className="registerSpan">Este campo es requerido.</span>
+                                <span className="validateSpan">Este campo es requerido.</span>
                             )}
                             {errors?.firstName?.type === "minLength" && (
-                                <span className="registerSpan">Debe tener al menos 3 caracteres.</span>
+                                <span className="validateSpan">Debe tener al menos 3 caracteres.</span>
                             )}
                         </div>
                         <div className="d-flex align-items-center">
@@ -102,10 +102,10 @@ export const RegisterScreen = () => {
                                 {...register("lastName", { required: true, minLength: 3 })}
                             />
                             {errors?.lastName && (
-                                <span className="registerSpan">Este campo es requerido.</span>
+                                <span className="validateSpan">Este campo es requerido.</span>
                             )}
                             {errors?.lastName?.type === "minLength" && (
-                                <span className="registerSpan">Debe tener al menos 3 caracteres.</span>
+                                <span className="validateSpan">Debe tener al menos 3 caracteres.</span>
                             )}
                         </div>
                         <div className="d-flex align-items-center">
@@ -122,13 +122,13 @@ export const RegisterScreen = () => {
                                 })}
                             />
                             {errors?.email?.type === "required" && (
-                                <span className="registerSpan">Este campo es requerido.</span>
+                                <span className="validateSpan">Este campo es requerido.</span>
                             )}
                             {errors?.email?.type === "pattern" && (
-                                <span className="registerSpan">Ingrese un email válido.</span>
+                                <span className="validateSpan">Ingrese un email válido.</span>
                             )}
                             {emailExists && (
-                                <span className="registerSpan">El email ya ha sido registrado.</span>
+                                <span className="validateSpan">El email ya ha sido registrado.</span>
                             )}
                         </div>
                         <div className="d-flex align-items-center">
@@ -146,10 +146,10 @@ export const RegisterScreen = () => {
                                 })}
                             />
                             {errors?.password && (
-                                <span className="registerSpan">Este campo es requerido.</span>
+                                <span className="validateSpan">Este campo es requerido.</span>
                             )}
                             {errors?.password && errors.password.type === "pattern" && (
-                                <span className="registerSpan">La contraseña debe tener al menos 6 caracteres, una mayúscula y un número.</span>
+                                <span className="validateSpan">La contraseña debe tener al menos 6 caracteres, una mayúscula y un número.</span>
                             )}
                         </div>
                         <div
@@ -175,14 +175,14 @@ export const RegisterScreen = () => {
                                 })}
                             />
                             {errors?.confirmPassword && (
-                                <span className="registerSpan">Este campo es requerido.</span>
+                                <span className="validateSpan">Este campo es requerido.</span>
                             )}
                             {errors?.confirmPassword &&
                                 errors.confirmPassword.type === "pattern" && (
-                                    <span className="registerSpan">La contraseña debe tener al menos 6 caracteres, una mayúscula y un número.</span>
+                                    <span className="validateSpan">La contraseña debe tener al menos 6 caracteres, una mayúscula y un número.</span>
                                 )}
                             {!passwordMatch && (
-                                <span className="registerSpan">Las contraseñas no coinciden.</span>
+                                <span className="validateSpan">Las contraseñas no coinciden.</span>
                             )}
                         </div>
                         <div className="d-flex align-items-center" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
