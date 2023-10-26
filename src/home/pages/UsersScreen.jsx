@@ -265,9 +265,9 @@ export const UsersScreen = () => {
           <Modal.Title className='modalTitle' ><strong>Editar Usuario</strong></Modal.Title>
         </Modal.Header>
         <Modal.Body className='modalBody'>
-          <Form onSubmit={handleEditMyUserFormSubmit}>
-            <Form.Group className='formFields' controlId="editFormFirstName">
-              <Form.Label>Nombre:</Form.Label>
+          <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleEditMyUserFormSubmit}>
+            <Form.Group className="formFields m-2 col-10 col-md-5" controlId="editFormFirstName">
+              <Form.Label className='modalLabel'>Nombre:</Form.Label>
               <Form.Control
                 type="text"
                 maxLength={20}
@@ -276,8 +276,8 @@ export const UsersScreen = () => {
                 onChange={handleEditInputChange}
               />
             </Form.Group>
-            <Form.Group className='formFields' controlId="editFormLasttName">
-              <Form.Label>Apellido:</Form.Label>
+            <Form.Group className="formFields m-2 col-10 col-md-5" controlId="editFormLasttName">
+              <Form.Label className='modalLabel'>Apellido:</Form.Label>
               <Form.Control
                 type="text"
                 maxLength={20}
@@ -288,8 +288,8 @@ export const UsersScreen = () => {
             </Form.Group>
             {decodedToken.isAdmin && (
               <>
-                <Form.Group className='formFields' controlId="editFormIsActivated">
-                  <Form.Check className="mt-3"
+                <Form.Group className='formFields m-2 col-10 col-md-5' controlId="editFormIsActivated">
+                  <Form.Check className="mt-3 modalLabel"
                     type="checkbox"
                     name="isActivated"
                     checked={editedUser?.isActivated || false}
@@ -297,8 +297,8 @@ export const UsersScreen = () => {
                     label="Cuenta activa"
                   />
                 </Form.Group>
-                <Form.Group className='formFields' controlId="editFormIsAdmin">
-                  <Form.Check className="mt-3"
+                <Form.Group className='formFields m-2 col-10 col-md-5' controlId="editFormIsAdmin">
+                  <Form.Check className="mt-3 modalLabel"
                     type="checkbox"
                     name="isAdmin"
                     checked={editedUser?.isAdmin || false}
@@ -308,12 +308,12 @@ export const UsersScreen = () => {
                 </Form.Group>
               </>
             )}
-            <Modal.Footer className="mt-3 d-flex justify-content-center">
-              <Button className='buttonsFormAddStudent' variant="null" onClick={handleCloseEditMyUserModal}>
-                Cancelar
-              </Button>
-              <Button className='buttonsFormAddStudent' variant="null" type="submit">
+            <Modal.Footer className="mt-3 col-12">
+              <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" type="submit">
                 Guardar cambios
+              </Button>
+              <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" onClick={handleCloseEditMyUserModal}>
+                Cancelar
               </Button>
             </Modal.Footer>
           </Form>
@@ -324,9 +324,9 @@ export const UsersScreen = () => {
           <Modal.Title className="modalTitle"><strong>Modificar contraseña</strong></Modal.Title>
         </Modal.Header>
         <Modal.Body className='modalBody'>
-          <Form onSubmit={handleEditPasswordFormSubmit}>
-            <Form.Group className="formFields" controlId="editFormFirstName">
-              <Form.Label>Email:</Form.Label>
+          <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleEditPasswordFormSubmit}>
+            <Form.Group className="formFields m-2 col-10" controlId="editFormFirstName">
+              <Form.Label className='modalLabel'>Email:</Form.Label>
               <Form.Control
                 type="text"
                 name="email"
@@ -334,12 +334,13 @@ export const UsersScreen = () => {
                 disabled
               />
             </Form.Group>
-            <Form.Group className="formFields" controlId="editFormPassword">
-              <Form.Label>Nueva contraseña:</Form.Label>
+            <Form.Group className="formFields m-2 col-10 col-md-5" controlId="editFormPassword">
+              <Form.Label className='modalLabel'>Nueva contraseña:</Form.Label>
               <Form.Control
                 type="password"
                 maxLength={35}
                 name="password"
+                placeholder='xxxxxx'
                 {...register('password', { required: true, pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/ })}
               />
               {errors.password && (
@@ -348,12 +349,13 @@ export const UsersScreen = () => {
                 </span>
               )}
             </Form.Group>
-            <Form.Group className="formFields" controlId="editFormRepeatPassword">
-              <Form.Label>Repetir nueva contraseña:</Form.Label>
+            <Form.Group className="formFields m-2 col-10 col-md-5" controlId="editFormRepeatPassword">
+              <Form.Label className='modalLabel'>Repetir contraseña:</Form.Label>
               <Form.Control
                 type="password"
                 maxLength={35}
                 name="repeatPassword"
+                placeholder='xxxxxx'
                 {...register('repeatPassword', { required: true, validate: value => value === watch('password') })}
               />
               {errors.repeatPassword && (
@@ -362,12 +364,12 @@ export const UsersScreen = () => {
                 </span>
               )}
             </Form.Group>
-            <Modal.Footer className='mt-3 d-flex justify-content-center'>
-              <Button className='buttonsFormAddStudent' variant="null" onClick={handleCloseEditPasswordModal}>
-                Cancelar
-              </Button>
-              <Button className='buttonsFormAddStudent' variant="null" type="submit">
+            <Modal.Footer className='mt-3 col-12'>
+              <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" type="submit">
                 Modificar
+              </Button>
+              <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" onClick={handleCloseEditPasswordModal}>
+                Cancelar
               </Button>
             </Modal.Footer>
           </Form>
