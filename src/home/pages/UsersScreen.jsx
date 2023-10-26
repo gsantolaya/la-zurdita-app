@@ -232,8 +232,7 @@ export const UsersScreen = () => {
               <tbody>
                 {users.map((user) => {
                   const isCurrentUser = user.email === decodedToken.email;
-                  const isEmailAdmin = user.email === process.env.EMAIL_ADMIN;
-console.log(isEmailAdmin)
+                  const isEmailAdmin = user.email === process.env.REACT_APP_EMAIL_ADMIN;
                   if (isCurrentUser || isEmailAdmin) {
                     return null;
                   }
