@@ -21,7 +21,11 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
     const handleEditProductErrorToastClose = () => {
         setShowEditProductErrorToast(false)
     }
-
+    const handleOnHideModal = () => {
+        reset()
+        onHide()
+      }
+      
     useEffect(() => {
         if (selectedProduct) {
             reset({
@@ -68,7 +72,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
     return (
         <>
             {/* MODAL */}
-            <Modal show={show} onHide={onHide}>
+            <Modal show={show} onHide={handleOnHideModal}>
                 <Modal.Header closeButton className='modalHeader'>
                     <Modal.Title className="modalTitle">
                         <strong>Modificar producto</strong>
@@ -165,7 +169,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                 <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" type="submit">
                                     Guardar Cambios
                                 </Button>
-                                <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" onClick={onHide}>
+                                <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" onClick={handleOnHideModal}>
                                     Cancelar
                                 </Button>
                             </Modal.Footer>

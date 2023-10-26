@@ -22,7 +22,10 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
     const handleErrorAddExpenseToastClose = () => {
         setShowErrorAddExpenseToast(false)
     }
-
+    const handleOnHideModal = () => {
+        reset()
+        onHide()
+      }
     //FUNCION PARA AGREGAR UN PRODUCTO
     const handleAddExpenseFormSubmit = async (data) => {
         try {
@@ -47,7 +50,7 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
     return (
         <>
             {/* MODAL */}
-            <Modal show={show} onHide={onHide}>
+            <Modal show={show} onHide={handleOnHideModal}>
                 <Modal.Header closeButton className='modalHeader'>
                     <Modal.Title className="modalTitle">
                         <strong>Nuevo Gasto</strong>
@@ -116,7 +119,7 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                             <Button className='buttonsFormAddExpense m-2 w-100' variant="secondary" type="submit">
                                 Agregar Gasto
                             </Button>
-                            <Button className='buttonsFormAddExpense m-2 w-100' variant="secondary" onClick={onHide}>
+                            <Button className='buttonsFormAddExpense m-2 w-100' variant="secondary" onClick={handleOnHideModal}>
                                 Cancelar
                             </Button>
                         </Modal.Footer>

@@ -22,7 +22,10 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
     const handleErrorAddClientToastClose = () => {
         setShowErrorAddClientToast(false)
     }
-
+    const handleOnHideModal = () => {
+        reset()
+        onHide()
+      }
     //FUNCION PARA AGREGAR UN CLIENTE
     const handleAddClientFormSubmit = async (data) => {
         const isPaymentUpToDate = true
@@ -50,7 +53,7 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
     return (
         <>
             {/* MODAL */}
-            <Modal show={show} onHide={onHide}>
+            <Modal show={show} onHide={handleOnHideModal}>
                 <Modal.Header closeButton className='modalHeader'>
                     <Modal.Title className="modalTitle">
                         <strong>Nuevo Cliente</strong>
@@ -98,7 +101,7 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
                             <Button className='buttonsFormAddClient m-2 w-100' variant="secondary" type="submit">
                                 Agregar Cliente
                             </Button>
-                            <Button className='buttonsFormAddClient m-2 w-100' variant="secondary" onClick={onHide}>
+                            <Button className='buttonsFormAddClient m-2 w-100' variant="secondary" onClick={handleOnHideModal}>
                                 Cancelar
                             </Button>
                         </Modal.Footer>

@@ -21,7 +21,10 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
     const handleEditClientErrorToastClose = () => {
         setShowEditClientErrorToast(false)
     }
-
+    const handleOnHideModal = () => {
+        reset()
+        onHide()
+      }
     useEffect(() => {
         if (selectedClient) {
             reset({
@@ -67,7 +70,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
     return (
         <>
             {/* MODAL */}
-            <Modal show={show} onHide={onHide}>
+            <Modal show={show} onHide={handleOnHideModal}>
                 <Modal.Header className='modalHeader' closeButton>
                     <Modal.Title className="modalTitle">
                         <strong>Modificar información</strong>
@@ -120,7 +123,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                 <Button className='buttonsFormAddClient m-2 w-100' variant="secondary" type="submit">
                                     Guardar Cambios
                                 </Button>
-                                <Button className='buttonsFormAddClient m-2 w-100' variant="secondary" onClick={onHide}>
+                                <Button className='buttonsFormAddClient m-2 w-100' variant="secondary" onClick={handleOnHideModal}>
                                     Cancelar
                                 </Button>
                             </Modal.Footer>

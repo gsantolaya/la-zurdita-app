@@ -21,7 +21,10 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
     const handleEditSaleErrorToastClose = () => {
         setShowEditSaleErrorToast(false)
     }
-
+    const handleOnHideModal = () => {
+        reset()
+        onHide()
+      }
     // FUNCION PARA MODIFICAR UN PRODUCTO
     const handleFinishOrderFormSubmit = async (formData) => {
         try {
@@ -89,7 +92,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
     return (
         <>
             {/* MODAL */}
-            <Modal show={show} onHide={onHide}>
+            <Modal show={show} onHide={handleOnHideModal}>
                 <Modal.Header className='modalHeader' closeButton>
                     <Modal.Title className="modalTitle">
                         <strong>Modificar información</strong>
@@ -124,7 +127,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                             <Button className='buttonsFormAddSale m-2 w-100' variant="secondary" type="submit">
                                 Guardar Cambios
                             </Button>
-                            <Button className='buttonsFormAddSale m-2 w-100' variant="secondary" onClick={onHide}>
+                            <Button className='buttonsFormAddSale m-2 w-100' variant="secondary" onClick={handleOnHideModal}>
                                 Cancelar
                             </Button>
                         </Modal.Footer>

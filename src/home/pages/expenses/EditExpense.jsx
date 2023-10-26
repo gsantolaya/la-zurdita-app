@@ -21,7 +21,10 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const handleEditExpenseErrorToastClose = () => {
         setShowEditExpenseErrorToast(false)
     }
-
+    const handleOnHideModal = () => {
+        reset()
+        onHide()
+      }
     useEffect(() => {
         if (selectedExpense) {
             reset({
@@ -71,7 +74,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     return (
         <>
             {/* MODAL */}
-            <Modal show={show} onHide={onHide}>
+            <Modal show={show} onHide={handleOnHideModal}>
                 <Modal.Header closeButton className='modalHeader'>
                     <Modal.Title className="modalTitle">
                         <strong>Modificar gasto</strong>
@@ -136,7 +139,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                 <Button className='buttonsFormAddExpense m-2 w-100' variant="secondary" type="submit">
                                     Guardar Cambios
                                 </Button>
-                                <Button className='buttonsFormAddExpense m-2 w-100' variant="secondary" onClick={onHide}>
+                                <Button className='buttonsFormAddExpense m-2 w-100' variant="secondary" onClick={handleOnHideModal}>
                                     Cancelar
                                 </Button>
                             </Modal.Footer>

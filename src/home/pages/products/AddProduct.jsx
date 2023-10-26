@@ -22,7 +22,11 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
     const handleErrorAddProductToastClose = () => {
         setShowErrorAddProductToast(false)
     }
-
+    const handleOnHideModal = () => {
+        reset()
+        onHide()
+      }
+    
     //FUNCION PARA AGREGAR UN PRODUCTO
     const handleAddProductFormSubmit = async (data) => {
         try {
@@ -47,7 +51,7 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
     return (
         <>
             {/* MODAL */}
-            <Modal show={show} onHide={onHide}>
+            <Modal show={show} onHide={handleOnHideModal}>
                 <Modal.Header closeButton className='modalHeader'>
                     <Modal.Title className="modalTitle">
                         <strong>Nueva Empanada</strong>
@@ -74,9 +78,9 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 step="0.01"
                                 name="unitPrice"
                                 placeholder="Ingrese el precio"
-                                {...register("unitPrice", { required: true, min: 0 })}
+                                {...register("unitPrice", { required: "Este campo es requerido", min: { value: 0, message: "El precio debe ser un número positivo" } })}
                             />
-                            {errors.unitPrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
+                            {errors.unitPrice && (<span className="authSpan">{errors.unitPrice.message}</span>)}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicRetailPrice">
                             <Form.Label className='modalLabel'>Precio Minorista:</Form.Label>
@@ -86,9 +90,9 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 step="0.01"
                                 name="retailPrice"
                                 placeholder="Ingrese el precio"
-                                {...register("retailPrice", { required: true, min: 0 })}
+                                {...register("retailPrice", { required: "Este campo es requerido", min: { value: 0, message: "El precio debe ser un número positivo" } })}
                             />
-                            {errors.retailPrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
+                            {errors.retailPrice && (<span className="authSpan">{errors.retailPrice.message}</span>)}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWholesalePrice">
                             <Form.Label className='modalLabel'>Precio Mayorista:</Form.Label>
@@ -98,9 +102,9 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 step="0.01"
                                 name="wholesalePrice"
                                 placeholder="Ingrese el precio"
-                                {...register("wholesalePrice", { required: true, min: 0 })}
+                                {...register("wholesalePrice", { required: "Este campo es requerido", min: { value: 0, message: "El precio debe ser un número positivo" } })}
                             />
-                            {errors.wholesalePrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
+                            {errors.wholesalePrice && (<span className="authSpan">{errors.wholesalePrice.message}</span>)}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicStock">
                             <Form.Label className='modalLabel'>Stock:</Form.Label>
@@ -109,22 +113,22 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 min="0"
                                 name="stock"
                                 placeholder="Ingrese el stock"
-                                {...register("stock", { required: true, min: 0 })}
+                                {...register("stock", { required: "Este campo es requerido", min: { value: 0, message: "El stock debe ser un número positivo" } })}
                             />
-                            {errors.stock && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
+                            {errors.stock && (<span className="authSpan">{errors.stock.message}</span>)}
                         </Form.Group>
                         <Modal.Footer className="mt-3 col-12">
                             <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" type="submit">
                                 Agregar Empanada
                             </Button>
-                            <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" onClick={onHide}>
+                            <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" onClick={handleOnHideModal}>
                                 Cancelar
                             </Button>
                         </Modal.Footer>
                     </Form>
                 </Modal.Body>
             </Modal>
-            
+
             {/* TOASTS*/}
             <ToastContainer className="p-3" style={{ position: 'fixed', zIndex: 1, bottom: '20px', right: '20px', }} >
                 <Toast show={showConfirmationAddProductToast} onClose={handleConfirmationAddProductToastClose} className="toastConfirmation" delay={5000} autohide>
