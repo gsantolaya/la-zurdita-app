@@ -144,7 +144,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
 
     try {
       const salesPromises = []
-      const productIdToAmountMap = {} // Mapa para rastrear las cantidades por productId
+      const productIdToAmountMap = {}
 
       additionalProductFields.forEach((productField, index) => {
         const productId = data[`product${productField.id}`]
@@ -152,16 +152,13 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
         const amountDescription = data[`amountDescription${productField.id}`]
         const productStatus = data[`productStatus${productField.id}`]
 
-        // Comprobar si ya hemos visto este producto
         if (productId in productIdToAmountMap) {
-          // Sumar la cantidad al producto existente
           if (amountDescription === 'docena') {
             productIdToAmountMap[productId] += amount * 12
           } else {
             productIdToAmountMap[productId] += amount
           }
         } else {
-          // Crear una nueva entrada para el producto
           if (amountDescription === 'docena') {
             productIdToAmountMap[productId] = amount * 12
           } else {

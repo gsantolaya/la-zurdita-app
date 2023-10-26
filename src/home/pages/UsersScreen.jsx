@@ -8,6 +8,7 @@ import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
 import { useForm } from 'react-hook-form'
 import Toast from 'react-bootstrap/Toast'
+import ToastContainer from 'react-bootstrap/ToastContainer'
 import './UsersScreen.css'
 
 export const UsersScreen = () => {
@@ -230,11 +231,15 @@ export const UsersScreen = () => {
               </thead>
               <tbody>
                 {users.map((user) => {
-                  const isCurrentUser = user.email === decodedToken.email
-                  if (isCurrentUser) {
-                    return null
+                  const isCurrentUser = user.email === decodedToken.email;
+                  const isEmailAdmin = user.email === process.env.EMAIL_ADMIN;
+
+                  if (isCurrentUser || isEmailAdmin) {
+                    return null;
                   }
-                  const userClass = user.isActivated ? '' : 'inactive-user'
+
+                  const userClass = user.isActivated ? '' : 'inactive-user';
+
                   return (
                     <tr key={user._id}>
                       <td className={`py-4 ${userClass}`}>{user.email}</td>
@@ -248,8 +253,9 @@ export const UsersScreen = () => {
                         </Button>
                       </td>
                     </tr>
-                  )
+                  );
                 })}
+
               </tbody>
             </Table>
           </div>
@@ -393,7 +399,7 @@ export const UsersScreen = () => {
           <Toast.Body>Usuario editado correctamente.</Toast.Body>
         </Toast>
       </div>
-      <div className="position-fixed bottom-0 end-0 p-3">
+      <ToastContainer className="p-3" style={{ position: 'fixed', zIndex: 1, bottom: '20px', right: '20px', }} >
         <Toast show={showEditUserErrorToast} onClose={handleEditUserErrorToastClose} delay={3000} autohide>
           <Toast.Header>
             <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
@@ -402,8 +408,6 @@ export const UsersScreen = () => {
           </Toast.Header>
           <Toast.Body>No se pudo editar al usuario seleccionado.</Toast.Body>
         </Toast>
-      </div>
-      <div className="position-fixed bottom-0 end-0 p-3">
         <Toast show={showEditPasswordConfirmationToast} onClose={handleEditPasswordConfirmationToastClose} delay={3000} autohide>
           <Toast.Header>
             <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
@@ -412,8 +416,6 @@ export const UsersScreen = () => {
           </Toast.Header>
           <Toast.Body>Contraseña modificada correctamente.</Toast.Body>
         </Toast>
-      </div>
-      <div className="position-fixed bottom-0 end-0 p-3">
         <Toast show={showEditPasswordErrorToast} onClose={handleEditPasswordErrorToastClose} delay={3000} autohide>
           <Toast.Header>
             <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
@@ -422,8 +424,6 @@ export const UsersScreen = () => {
           </Toast.Header>
           <Toast.Body>No se pudo modificar la contraseña.</Toast.Body>
         </Toast>
-      </div>
-      <div className="position-fixed bottom-0 end-0 p-3">
         <Toast show={showDeleteUserConfirmationToast} onClose={handleDeleteUserConfirmationToastClose} delay={3000} autohide>
           <Toast.Header>
             <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
@@ -432,8 +432,6 @@ export const UsersScreen = () => {
           </Toast.Header>
           <Toast.Body>Usuario eliminado correctamente.</Toast.Body>
         </Toast>
-      </div>
-      <div className="position-fixed bottom-0 end-0 p-3">
         <Toast show={showDeleteUserErrorToast} onClose={handleDeleteUserErrorToastClose} delay={3000} autohide>
           <Toast.Header>
             <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
@@ -442,7 +440,7 @@ export const UsersScreen = () => {
           </Toast.Header>
           <Toast.Body>No se pudo eliminar al usuario seleccionado.</Toast.Body>
         </Toast>
-      </div>
+      </ToastContainer>
     </>
   )
 }
