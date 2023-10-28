@@ -108,9 +108,9 @@ export const LoginScreen = () => {
                         </div>
                     )}
                     <div className="text-center">
-                        <Link className="loginLink" to={"/error404"}>
+                        {/* <Link className="loginLink" to={"/error404"}>
                             <b>¿Olvidaste tu contraseña?</b>
-                        </Link>
+                        </Link> */}
                     </div>
                     <div className="contenedorloginButton" >
                         <button className="loginButton" type="submit">Acceder</button>
