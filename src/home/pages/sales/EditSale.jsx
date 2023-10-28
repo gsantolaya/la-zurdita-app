@@ -24,7 +24,7 @@ export const EditSale = ({ show, onHide, fetchSales, selectedSale }) => {
     const handleOnHideModal = () => {
         reset()
         onHide()
-      }
+    }
     useEffect(() => {
         if (selectedSale) {
             reset({
@@ -117,17 +117,28 @@ export const EditSale = ({ show, onHide, fetchSales, selectedSale }) => {
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
                                 <Form.Label className='modalLabel'>Pagado:</Form.Label>
                                 <Form.Control type="number" maxLength={20} name="payment" placeholder="0000"
-                                    {...register("payment", { required: true })}
+                                    {...register("payment", {
+                                        required: true,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                     defaultValue={selectedSale.payment}
                                 />
-                                {errors?.payment && (<span className="authSpan">Este campo es requerido</span>)}
+                                {errors.payment && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
                                 <Form.Label className='modalLabel'>Propina:</Form.Label>
                                 <Form.Control type="number" maxLength={20} name="tip" placeholder="0000"
-                                    {...register("tip", { required: false })}
+                                    {...register("tip", {
+                                        required: false,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                     defaultValue={selectedSale.tip}
                                 />
+                                {errors.tip && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Modal.Footer className="mt-3 col-12">
                                 <Button className='buttonsFormAddSale m-2 w-100' variant="secondary" type="submit">

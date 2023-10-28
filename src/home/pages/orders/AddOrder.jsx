@@ -139,20 +139,20 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
       const productId = data[`product${productField.id}`];
       const amount = parseFloat(data[`amount${productField.id}`]);
       const amountDescription = data[`amountDescription${productField.id}`];
-  
+
       // Consulta el producto actual en la base de datos para obtener su stock actual
       const response = await axios.get(`/products/${productId}`, {
         headers: {
           "access-token": store.token
         }
       });
-  
+
       const product = response.data;
       const currentStock = product.stock;
-  
+
       // Ajusta la cantidad si la descripción es "docena"
       const adjustedAmount = amountDescription === "docena" ? amount * 12 : amount;
-  
+
       // Compara el stock actual con la cantidad solicitada
       if (currentStock < adjustedAmount) {
         // Stock insuficiente, muestra una alerta y detén la función
@@ -162,14 +162,14 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
     }
     return true;
   };
-  
+
   // GUARDAR VENTA EN LA BASE DE DATOS
   const handleAddSaleFormSubmit = async (data) => {
     if (additionalProductFields.length === 0) {
       alert("Debes agregar al menos un producto.");
       return;
     }
-  
+
     // Verifica el stock antes de continuar
     const stockSufficient = await checkStockSufficiency(data);
     if (!stockSufficient) {
@@ -457,7 +457,6 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className='modalBody'>
-
           <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleSubmit(handleAddSaleFormSubmit)}>
             <div className='col-12 row my-2'>
               <h5 className='modalLabel'>Información General:</h5>
@@ -483,6 +482,9 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                     </option>
                   ))}
                 </Form.Select>
+                {errors.client && (
+                  <span className="validateSpan">Seleccione una opción.</span>
+                )}
               </Form.Group>
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicType">
                 <Form.Label className='modalLabel'>Tipo de venta:</Form.Label>
@@ -491,6 +493,9 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                   <option value="mayorista">Mayorista</option>
                   <option value="minorista">Minorista</option>
                 </Form.Select>
+                {errors.type && (
+                  <span className="validateSpan">Seleccione una opción.</span>
+                )}
               </Form.Group>
             </div>
             <div className='col-12 row my-2'>
@@ -520,18 +525,20 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                         </option>
                       ))}
                     </Form.Select>
+                    {errors[`product${field.id}`] && (
+                      <span className="validateSpan">Seleccione una opción.</span>
+                    )}
                   </Form.Group>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-1" controlId={`formBasicAmount${field.id}`}>
                     <Form.Label className='modalLabel'>Cantidad:</Form.Label>
                     <Form.Control
                       type="number"
                       maxLength={5}
-                      min="0"
                       name={`amount${field.id}`}
                       placeholder="000"
                       {...register(`amount${field.id}`, {
                         required: true,
-                        validate: (value) => parseFloat(value) >= 0,
+                        pattern: /^\d+(\.\d{1,2})?$/
                       })}
                       onChange={(e) => {
                         const amount = parseFloat(e.target.value)
@@ -542,15 +549,12 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                         setSubtotals(updatedSubtotals)
                       }}
                     />
-                    {errors[`amount${field.id}`]?.type === 'required' && (
-                      <span className="authSpan">Este campo es requerido</span>
-                    )}
-                    {errors[`amount${field.id}`]?.type === 'validate' && (
-                      <span className="authSpan">Debe ser un número positivo</span>
+                    {errors[`amount${field.id}`] && (
+                      <span className="validateSpan">Ingrese un número válido.</span>
                     )}
                   </Form.Group>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-3" controlId={`formBasicAmountDescription${field.id}`}>
-                    <Form.Label className='modalLabel'>Descripción cantidad:</Form.Label>
+                    <Form.Label className='modalLabel'>Cantidad por:</Form.Label>
                     <Form.Select
                       as="select"
                       name={`amountDescription${field.id}`}
@@ -564,6 +568,9 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                         <option value="unidad">Unidad</option>
                       )}
                     </Form.Select>
+                    {errors[`amountDescription${field.id}`] && (
+                      <span className="validateSpan">Seleccione una opción.</span>
+                    )}
                   </Form.Group>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-2" controlId={`formBasicStatus${field.id}`}>
                     <Form.Label className='modalLabel'>Descripción adicional:</Form.Label>
@@ -572,6 +579,9 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                       <option value="horneadas">Horneadas</option>
                       <option value="congeladas">Congeladas</option>
                     </Form.Select>
+                    {errors[`productStatus${field.id}`] && (
+                      <span className="validateSpan">Seleccione una opción.</span>
+                    )}
                   </Form.Group>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-2" controlId={`formBasicPayment${field.id}`}>
                     <Form.Label className='modalLabel'>Precio unitario:</Form.Label>
@@ -580,7 +590,10 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                       min="0"
                       name={`unitPrice${field.id}`}
                       placeholder="Precio por unidad"
-                      {...register(`unitPrice${field.id}`, { required: true, validate: (value) => parseFloat(value) >= 0 })}
+                      {...register(`unitPrice${field.id}`, {
+                        required: false,
+                        pattern: /^\d+(\.\d{1,2})?$/
+                      })}
                       onChange={(e) => {
                         const unitPrice = parseFloat(e.target.value)
                         const amount = parseFloat(watch(`amount${field.id}`))
@@ -590,11 +603,8 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                         setSubtotals(updatedSubtotals)
                       }}
                     />
-                    {errors[`unitPrice${field.id}`]?.type === 'required' && (
-                      <span className="authSpan">Este campo es requerido</span>
-                    )}
-                    {errors[`unitPrice${field.id}`]?.type === 'validate' && (
-                      <span className="authSpan">Debe ser un número positivo</span>
+                    {errors[`unitPrice${field.id}`] && (
+                      <span className="validateSpan">Ingrese un número válido.</span>
                     )}
                   </Form.Group>
                   <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemoveProductField(field.id)} style={{ width: '40px', height: '40px' }}>
