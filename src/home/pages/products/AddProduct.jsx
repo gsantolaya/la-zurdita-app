@@ -91,11 +91,8 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                     pattern: /^\d+(\.\d{1,2})?$/
                                 })}
                             />
-                            {errors.unitPrice && errors.unitPrice.type === "required" && (
-                                <span className="validateSpan">Este campo es requerido.</span>
-                            )}
-                            {errors.unitPrice && errors.unitPrice.type === "pattern" && (
-                                <span className="validateSpan">Ingrese un número válido (positivo con hasta 2 decimales).</span>
+                            {errors.unitPrice && (
+                                <span className="validateSpan">Ingrese un número válido.</span>
                             )}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicRetailPrice">
@@ -111,11 +108,8 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                     pattern: /^\d+(\.\d{1,2})?$/
                                 })}
                             />
-                            {errors.retailPrice && errors.retailPrice.type === "required" && (
-                                <span className="validateSpan">Este campo es requerido.</span>
-                            )}
-                            {errors.retailPrice && errors.retailPrice.type === "pattern" && (
-                                <span className="validateSpan">Ingrese un número válido (positivo con hasta 2 decimales).</span>
+                            {errors.retailPrice && (
+                                <span className="validateSpan">Ingrese un número válido.</span>
                             )}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWholesalePrice">
@@ -131,12 +125,10 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                     pattern: /^\d+(\.\d{1,2})?$/
                                 })}
                             />
-                            {errors.wholesalePrice && errors.wholesalePrice.type === "required" && (
-                                <span className="validateSpan">Este campo es requerido.</span>
+                            {errors.wholesalePrice && (
+                                <span className="validateSpan">Ingrese un número válido.</span>
                             )}
-                            {errors.wholesalePrice && errors.wholesalePrice.type === "pattern" && (
-                                <span className="validateSpan">Ingrese un número válido (positivo con hasta 2 decimales).</span>
-                            )}                        </Form.Group>
+                        </Form.Group>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicStock">
                             <Form.Label className='modalLabel'>Stock:</Form.Label>
                             <Form.Control
@@ -147,10 +139,11 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 {...register("stock", {
                                     required: true,
                                     pattern: /^\d+(\.\d{1,2})?$/
-                                })}                            />
-                            {errors.stock && errors.stock.type === "required" && (
-                                <span className="validateSpan">Este campo es requerido.</span>
-                            )}                        </Form.Group>
+                                })} />
+                            {errors.wholesalePrice && (
+                                <span className="validateSpan">Ingrese un número válido.</span>
+                            )}
+                        </Form.Group>
                         <Modal.Footer className="mt-3 col-12">
                             <Button className='buttonsFormAddProduct m-2 w-100' variant="secondary" type="submit">
                                 Agregar Empanada

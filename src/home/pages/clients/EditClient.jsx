@@ -24,7 +24,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
     const handleOnHideModal = () => {
         reset()
         onHide()
-      }
+    }
     useEffect(() => {
         if (selectedClient) {
             reset({
@@ -81,43 +81,86 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                         <Form className='d-flex flex-wrap justify-content-center' onSubmit={handleSubmit(handleEditClientFormSubmit)}>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicFirstName">
                                 <Form.Label className='modalLabel'>Nombre:</Form.Label>
-                                <Form.Control type="text" maxLength={30} name="firstName" placeholder="Ingrese el nombre"
-                                    {...register("firstName", { required: true })}
+                                <Form.Control
+                                    type="text"
+                                    maxLength={30}
+                                    name="firstName"
+                                    placeholder="Ingrese el nombre"
+                                    {...register("firstName", {
+                                        required: true,
+                                        pattern: /^[A-Za-z\s]+$/
+                                    })}
                                     defaultValue={selectedClient.firstName}
                                 />
-                                {errors?.firstName && (<span className="authSpan">Este campo es requerido</span>)}
+                                {errors.firstName && errors.firstName.type === "required" && (
+                                    <span className="validateSpan">Este campo es requerido.</span>
+                                )}
+                                {errors.firstName && errors.firstName.type === "pattern" && (
+                                    <span className="validateSpan">Nombre inválido. Solo se permiten letras y espacios.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicLastName">
                                 <Form.Label className='modalLabel'>Apellido:</Form.Label>
-                                <Form.Control type="text" maxLength={30} name="lastName" placeholder="Ingrese el apellido"
-                                    {...register("lastName", { required: true })}
+                                <Form.Control
+                                    type="text"
+                                    maxLength={30}
+                                    name="lastName"
+                                    placeholder="Ingrese el apellido"
+                                    {...register("lastName", {
+                                        required: true,
+                                        pattern: /^[A-Za-z\s]+$/
+                                    })}
                                     defaultValue={selectedClient.lastName}
                                 />
-                                {errors?.lastName && (<span className="authSpan">Este campo es requerido</span>)}
+                                {errors.lastName && errors.lastName.type === "required" && (
+                                    <span className="validateSpan">Este campo es requerido.</span>
+                                )}
+                                {errors.lastName && errors.lastName.type === "pattern" && (
+                                    <span className="validateSpan">Apellido inválido. Solo se permiten letras y espacios.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicDescription">
                                 <Form.Label className='modalLabel'>Teléfono:</Form.Label>
-                                <Form.Control type="number" maxLength={30} name="phone" placeholder="Ingrese un teléfono"
-                                    {...register("phone", { required: true })}
+                                <Form.Control
+                                    type="number"
+                                    maxLength={30}
+                                    name="phone"
+                                    placeholder="Ingrese un teléfono"
+                                    {...register("phone", { required: true, pattern: /^\d+$/ })}
                                     defaultValue={selectedClient.phone}
                                 />
-                                {errors?.phone && (<span className="authSpan">Este campo es requerido</span>)}
+                                {errors.phone && (
+                                    <span className="validateSpan">
+                                        {errors.phone.type === "required"
+                                            ? "Este campo es requerido."
+                                            : "Ingrese un número válido."}
+                                    </span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicValue">
                                 <Form.Label className='modalLabel'>Dirección:</Form.Label>
-                                <Form.Control type="text" maxLength={20} name="address" placeholder="Ingrese una dirección"
+                                <Form.Control
+                                    type="text"
+                                    maxLength={20}
+                                    name="address"
+                                    placeholder="Ingrese una dirección"
                                     {...register("address", { required: true })}
                                     defaultValue={selectedClient.address}
                                 />
-                                {errors?.address && (<span className="authSpan">Este campo es requerido</span>)}
+                                {errors.address && (
+                                    <span className="validateSpan">Este campo es requerido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10" controlId="formBasicGender">
                                 <Form.Label className='modalLabel'>Categoría:</Form.Label>
-                                <Form.Select as="select" name="category" defaultValue={selectedClient.category} {...register("category", { required: true })} >
+                                <Form.Select as="select" name="category" defaultValue={selectedClient.category} {...register("category", { required: true })}>
                                     <option value="">Selecciona una categoría</option>
                                     <option value="minorista">Minorista</option>
                                     <option value="mayorista">Mayorista</option>
                                 </Form.Select>
+                                {errors.category && (
+                                    <span className="validateSpan">Selecciona una categoría.</span>
+                                )}
                             </Form.Group>
                             <Modal.Footer className="mt-3 col-12">
                                 <Button className='buttonsFormAddClient m-2 w-100' variant="secondary" type="submit">

@@ -24,8 +24,8 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
     const handleOnHideModal = () => {
         reset()
         onHide()
-      }
-      
+    }
+
     useEffect(() => {
         if (selectedProduct) {
             reset({
@@ -88,10 +88,18 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                     maxLength={30}
                                     name="type"
                                     placeholder="Ingrese la variedad"
-                                    {...register('type', { required: true })}
+                                    {...register('type', {
+                                        required: true,
+                                        pattern: /^[A-Za-z\s]+$/
+                                    })}
                                     defaultValue={selectedProduct.type}
                                 />
-                                {errors.type && (<span className="authSpan">Este campo es requerido</span>)}
+                                {errors.type && errors.type.type === "required" && (
+                                    <span className="validateSpan">Este campo es requerido.</span>
+                                )}
+                                {errors.type && errors.type.type === "pattern" && (
+                                    <span className="validateSpan">Nombre inválido. Solo se permiten letras y espacios.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicUnitPrice">
                                 <Form.Label className='modalLabel'>Precio por unidad:</Form.Label>
@@ -101,49 +109,69 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                     step="0.01"
                                     name="unitPrice"
                                     placeholder="Ingrese el precio"
-                                    {...register('unitPrice', { required: true, min: 0 })}
+                                    {...register('unitPrice', {
+                                        required: true,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                     defaultValue={selectedProduct.unitPrice}
                                 />
-                                {errors.unitPrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
+                                {errors.unitPrice && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicRetailPrice">
-                                <Form.Label className='modalLabel'>Precio minorista:</Form.Label>
+                                <Form.Label className='modalLabel'>Precio Minorista:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     min="0"
                                     step="0.01"
                                     name="retailPrice"
                                     placeholder="Ingrese el precio"
-                                    {...register('retailPrice', { required: true, min: 0 })}
+                                    {...register('retailPrice', {
+                                        required: true,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                     defaultValue={selectedProduct.retailPrice}
                                 />
-                                {errors.retailPrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
+                                {errors.retailPrice && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWholesalePrice">
-                                <Form.Label className='modalLabel'>Precio mayorista:</Form.Label>
+                                <Form.Label className='modalLabel'>Precio Mayorista:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     min="0"
                                     step="0.01"
                                     name="wholesalePrice"
                                     placeholder="Ingrese el precio"
-                                    {...register('wholesalePrice', { required: true, min: 0 })}
+                                    {...register('wholesalePrice', {
+                                        required: true,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                     defaultValue={selectedProduct.wholesalePrice}
                                 />
-                                {errors.wholesalePrice && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
+                                {errors.wholesalePrice && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2  mt-3 col-10 d-flex justify-content-center align-items-center" controlId="formBasicStock">
                                 <Form.Label className='modalLabel'>Stock actual:</Form.Label>
                                 <Form.Control
-                                className='w-50 mx-3'
+                                    className='w-50 mx-3'
                                     type="number"
                                     min="0"
                                     name="stock"
                                     placeholder="Ingrese el stock"
-                                    {...register('stock', { required: true, min: 0 })}
+                                    {...register('stock', {
+                                        required: true,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                     defaultValue={selectedProduct.stock}
                                 />
-                                {errors.stock && (<span className="authSpan">Este campo es requerido y debe ser un número positivo</span>)}
+                                {errors.stock && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicAddStock">
                                 <Form.Label className='modalLabel'>Agregar Stock:</Form.Label>
@@ -174,6 +202,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                 </Button>
                             </Modal.Footer>
                         </Form>
+
                     ) : (
                         <p>Cargando...</p>
                     )}
