@@ -24,7 +24,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const handleOnHideModal = () => {
         reset()
         onHide()
-      }
+    }
     useEffect(() => {
         if (selectedExpense) {
             reset({
@@ -86,45 +86,83 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicVoucherNumber">
                                 <Form.Label className='modalLabel'>Nro. de comprobante:</Form.Label>
                                 <Form.Control type="number" name="voucherNumber" placeholder="Ingrese el número" defaultValue={selectedExpense.voucherNumber}
-                                    {...register("voucherNumber", { required: true })}
+                                    {...register("voucherNumber", {
+                                        required: true,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                 />
+                                {errors.payment && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicProvider">
                                 <Form.Label className='modalLabel'>Proveedor:</Form.Label>
                                 <Form.Control type="text" name="provider" placeholder="Ingrese el proveedor" defaultValue={selectedExpense.date}
-                                    {...register("provider", { required: true })}
+                                    {...register("provider", {
+                                        required: true,
+                                        pattern: /^[A-Za-z\s]+$/
+                                    })}
                                 />
+                                {errors.provider && errors.provider.type === "required" && (
+                                    <span className="validateSpan">Este campo es requerido.</span>
+                                )}
+                                {errors.provider && errors.provider.type === "pattern" && (
+                                    <span className="validateSpan">Nombre inválido. Solo se permiten letras y espacios.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicAmount">
                                 <Form.Label className='modalLabel'>Cantidad:</Form.Label>
                                 <Form.Control type="number" name="amount" placeholder="Ingrese la cantidad" defaultValue={selectedExpense.amount}
-                                    {...register("amount", { required: true })}
+                                    {...register("amount", {
+                                        required: true,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                 />
+                                {errors.amount && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicDescription">
                                 <Form.Label className='modalLabel'>Descripción:</Form.Label>
                                 <Form.Control type="text" name="description" placeholder="Ingrese la descripción" defaultValue={selectedExpense.description}
                                     {...register("description", { required: true })}
                                 />
+                                {errors.description && errors.provider.type === "required" && (
+                                    <span className="validateSpan">Este campo es requerido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicAdditionalDescription">
                                 <Form.Label className='modalLabel'>Descripción Adicional:</Form.Label>
                                 <Form.Control type="text" name="additionalDescription" placeholder="Ingrese la descripción adicional" defaultValue={selectedExpense.additionalDescription}
                                     {...register("additionalDescription", { required: true })}
                                 />
+                                {errors.additionalDescription && errors.provider.type === "required" && (
+                                    <span className="validateSpan">Este campo es requerido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicUnitPrice">
                                 <Form.Label className='modalLabel'>Precio Unitario:</Form.Label>
                                 <Form.Control type="number" name="unitPrice" placeholder="Ingrese el precio" defaultValue={selectedExpense.unitPrice}
-                                    {...register("unitPrice", { required: true })}
+                                    {...register("unitPrice", {
+                                        required: false,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                 />
+                                {errors.unitPrice && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
                                 <Form.Label className='modalLabel'>Pago:</Form.Label>
                                 <Form.Control type="number" maxLength={10} name="payment" placeholder="Ingrese la cantidad" defaultValue={selectedExpense.payment}
-                                    {...register("payment", { required: true })}
+                                    {...register("payment", {
+                                        required: false,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
                                 />
-                                {errors?.payment && (<span className="authSpan">Este campo es requerido</span>)}
+                                {errors.payment && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
+                                )}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWayToPay">
                                 <Form.Label className='modalLabel'>Forma de pago:</Form.Label>
@@ -134,6 +172,9 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                     <option value="transferencia">MercadoPago</option>
                                     <option value="transferencia">Transferencia</option>
                                 </Form.Select>
+                                {errors.wayToPay && (
+                                    <span className="validateSpan">Seleccione una opción.</span>
+                                )}
                             </Form.Group>
                             <Modal.Footer className="mt-3 col-12">
                                 <Button className='buttonsFormAddExpense m-2 w-100' variant="secondary" type="submit">
