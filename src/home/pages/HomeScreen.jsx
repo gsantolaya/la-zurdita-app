@@ -1,9 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './HomeScreen.css'
 import { SideMenu } from '../components/SideMenu'
 import { Welcome } from '../components/Welcome'
+import { TokenStorage } from "../../utils/TokenStorage"
+import { useNavigate } from "react-router-dom"
 
 export const HomeScreen = () => {
+
+    const store = TokenStorage()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!store.tokenValid) {
+          navigate("/login")
+        }
+      }, [navigate, store.token, store.tokenValid])
+
     return (
         <>
             <div className='d-flex'>
