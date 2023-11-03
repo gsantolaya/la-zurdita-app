@@ -68,7 +68,7 @@ export const AddProduct = ({ show, onHide, fetchProducts }) => {
                                 placeholder="Ingrese la variedad"
                                 {...register("type", {
                                     required: true,
-                                    pattern: /^[A-Za-z\s]+$/
+                                    pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
                                 })}
                             />
                             {errors.type && errors.type.type === "required" && (

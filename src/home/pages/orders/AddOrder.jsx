@@ -465,11 +465,11 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                 <Form.Control
                   type="date"
                   name="date"
-                  value={currentDate}
+                  // value={currentDate}
                   onChange={(e) => setCurrentDate(e.target.value)}
                   {...register("date", { required: true })}
                   max={currentDate}
-                  readOnly
+                  defaultValue={currentDate}
                 />
               </Form.Group>
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicClient">

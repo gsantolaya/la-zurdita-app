@@ -88,7 +88,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                     placeholder="Ingrese el nombre"
                                     {...register("firstName", {
                                         required: true,
-                                        pattern: /^[A-Za-z\s]+$/
+                                        pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
                                     })}
                                     defaultValue={selectedClient.firstName}
                                 />
@@ -108,7 +108,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                     placeholder="Ingrese el apellido"
                                     {...register("lastName", {
                                         required: true,
-                                        pattern: /^[A-Za-z\s]+$/
+                                        pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
                                     })}
                                     defaultValue={selectedClient.lastName}
                                 />
@@ -141,7 +141,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                 <Form.Label className='modalLabel'>Dirección:</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    maxLength={20}
+                                    maxLength={50}
                                     name="address"
                                     placeholder="Ingrese una dirección"
                                     {...register("address", { required: true })}

@@ -70,7 +70,8 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
                                 placeholder="Ingrese el nombre"
                                 {...register("firstName", { 
                                     required: true,
-                                    pattern: /^[A-Za-z\s]+$/})}
+                                    pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
+                                })}
                             />
                             {errors.firstName && errors.firstName.type === "required" && (
                                 <span className="validateSpan">Este campo es requerido.</span>
@@ -88,7 +89,8 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
                                 placeholder="Ingrese el apellido"
                                 {...register("lastName", { 
                                     required: true,
-                                    pattern: /^[A-Za-z\s]+$/})}
+                                    pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
+                                })}
                             />
                             {errors.lastName && errors.lastName.type === "required" && (
                                 <span className="validateSpan">Este campo es requerido.</span>
@@ -118,7 +120,7 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
                             <Form.Label className='modalLabel'>Dirección:</Form.Label>
                             <Form.Control
                                 type="text"
-                                maxLength={20}
+                                maxLength={50}
                                 name="address"
                                 placeholder="Ingrese una dirección"
                                 {...register("address", { required: true })}

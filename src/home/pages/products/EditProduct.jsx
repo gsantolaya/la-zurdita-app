@@ -90,7 +90,7 @@ export const EditProduct = ({ show, onHide, fetchProducts, selectedProduct }) =>
                                     placeholder="Ingrese la variedad"
                                     {...register('type', {
                                         required: true,
-                                        pattern: /^[A-Za-z\s]+$/
+                                        pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
                                     })}
                                     defaultValue={selectedProduct.type}
                                 />
