@@ -281,15 +281,12 @@ export const ExpensesScreen = () => {
                         <thead>
                             <tr>
                                 <th className='homeText text-center align-middle expenseTitle'>Fecha</th>
-                                <th className='homeText text-center align-middle expenseTitle'>Número de comprobante</th>
+                                <th className='homeText text-center align-middle expenseTitle'>Nro. de comprobante</th>
                                 <th className='homeText text-center align-middle expenseTitle'>Proveedor</th>
-                                <th className='homeText text-center align-middle expenseTitle'>Cantidad</th>
-                                <th className='homeText text-center align-middle expenseTitle'>Descripción</th>
-                                <th className='homeText text-center align-middle expenseTitle'>Descripción adicional</th>
-                                <th className='homeText text-center align-middle expenseTitle'>Precio Unitario</th>
-                                <th className='homeText text-center align-middle expenseTitle'>Subtotal</th>
+                                <th className='homeText text-center align-middle expenseTitle'>Items</th>
+                                <th className='homeText text-center align-middle expenseTitle'>Total</th>
+                                <th className='homeText text-center align-middle expenseTitle'>Pagado</th>
                                 <th className='homeText text-center align-middle expenseTitle'>Forma de pago</th>
-                                <th className='homeText text-center align-middle expenseTitle'>Pago a cuenta</th>
                                 <th className='homeText text-center align-middle expenseTitle'>Saldo</th>
                                 <th className='homeText text-center align-middle expenseTitle'>Estado</th>
                                 <th>
@@ -308,18 +305,26 @@ export const ExpensesScreen = () => {
                                         <td className="text-center align-middle">{formatTableDate(formatDate(expense.date))}</td>
                                         <td className="text-center align-middle">{expense.voucherNumber}</td>
                                         <td className="text-center align-middle">{expense.provider}</td>
-                                        <td className="text-center align-middle">{expense.amount}</td>
-                                        <td className="text-center align-middle">{expense.description}</td>
-                                        <td className="text-center align-middle">{expense.additionalDescription}</td>
-                                        <td className="text-center align-middle">${expense.unitPrice}</td>
-                                        <td className="text-center align-middle">${expense.unitPrice * expense.amount}</td>
-                                        <td className="text-center align-middle">{expense.wayToPay}</td>
-                                        <td className="text-center align-middle">${expense.payment}</td>
                                         <td className="text-center align-middle">
-                                            ${expense.payment ? expense.amount * expense.unitPrice - expense.payment : null}
+                                            {expense.items.map((item, index) => (
+                                                <div key={index} className="item-cell">
+                                                    <div className="item-property">
+                                                        {item.description} x {item.amount} {item.additionalDescription} - ${item.unitPrice}
+                                                    </div>
+                                                    {index < expense.items.length - 1 && <hr />}
+                                                </div>
+                                            ))}
                                         </td>
-                                        <td className={`text-center align-middle ${expense.amount * expense.unitPrice - expense.payment > 0 ? 'red-text' : (expense.amount * expense.unitPrice - expense.payment === 0 ? 'green-text' : 'blue-text')}`}>
-                                            {expense.amount * expense.unitPrice - expense.payment > 0 ? 'Saldo pendiente' : (expense.amount * expense.unitPrice - expense.payment === 0 ? 'Saldado' : 'Saldo a favor')}
+                                        <td className="text-center align-middle">
+                                            ${expense.items.reduce((total, item) => total + item.unitPrice, 0)}
+                                        </td>
+                                        <td className="text-center align-middle">${expense.payment}</td>
+                                        <td className="text-center align-middle">{expense.wayToPay}</td>
+                                        <td className="text-center align-middle">
+                                            ${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment}
+                                        </td>
+                                        <td className={`text-center align-middle ${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment > 0 ? 'red-text' : (expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment === 0 ? 'green-text' : 'blue-text')}`}>
+                                            {expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment > 0 ? 'Saldo pendiente' : (expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment === 0 ? 'Saldado' : 'Saldo a favor')}
                                         </td>
                                         <td className="text-center align-middle">
                                             <Button className='m-1 editButton' onClick={() => handleShowEditExpenseModal(expense)} variant="">
@@ -334,7 +339,7 @@ export const ExpensesScreen = () => {
                                             </Button>
                                         </td>
                                     </tr>
-                                )
+                                );
                             })}
                         </tbody>
                     </Table>

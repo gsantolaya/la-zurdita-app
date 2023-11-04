@@ -465,7 +465,6 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
                 <Form.Control
                   type="date"
                   name="date"
-                  // value={currentDate}
                   onChange={(e) => setCurrentDate(e.target.value)}
                   {...register("date", { required: true })}
                   max={currentDate}
