@@ -22,43 +22,62 @@ export const DeleteOrder = ({ show, onHide, fetchSales, selectedSale, products }
     //FUNCION PARA ELIMINAR UN PRODUCTO
     const deleteOrder = async (id) => {
         try {
-            const saleToDelete = selectedSale
-            const response = await axios.delete(`/sales/${id}`, {
-                headers: {
-                    "access-token": store.token
-                }
-            })
-            if (response.status === 200) {
-                const product = products.find((product) => product._id === saleToDelete.product)
-                let newStock = product.stock
-
-                if (saleToDelete.amountDescription === 'docena') {
-                    newStock += saleToDelete.amount * 12
-                } else {
-                    newStock += saleToDelete.amount
-                }
-
-                // Realizar el patch en la ruta correspondiente
-                const patchResponse = await axios.patch(`/products/${saleToDelete.product}/stock`, { stock: newStock }, {
-                    headers: {
-                        "access-token": store.token
-                    }
-                })
-
-                if (patchResponse.status === 200) {
-                    onHide()
-                    setShowConfirmationToast(true)
-                    fetchSales()
-                } else {
-                    setShowErrorToast(true)
-                }
+          const saleToDelete = selectedSale;
+          const stockToReturn = {};
+      
+          for (const productSale of saleToDelete.products) {
+            const product = products.find((product) => product._id === productSale.product);
+            const stockKey = product._id.toString();
+      
+            if (!stockToReturn[stockKey]) {
+              stockToReturn[stockKey] = 0;
             }
+      
+            if (productSale.amountDescription === 'docena') {
+              stockToReturn[stockKey] += productSale.amount * 12;
+            } else {
+              stockToReturn[stockKey] += productSale.amount;
+            }
+          }
+      
+          const response = await axios.delete(`/sales/${id}`, {
+            headers: {
+              "access-token": store.token
+            }
+          });
+      
+          if (response.status === 200) {
+            for (const stockKey in stockToReturn) {
+              if (stockToReturn.hasOwnProperty(stockKey)) {
+                const product = products.find((product) => product._id.toString() === stockKey);
+                const newStock = product.stock + stockToReturn[stockKey];
+      
+                // Realizar el patch en la ruta correspondiente para devolver el stock
+                const patchResponse = await axios.patch(`/products/${product._id}/stock`, { stock: newStock }, {
+                  headers: {
+                    "access-token": store.token
+                  }
+                });
+      
+                if (patchResponse.status !== 200) {
+                  setShowErrorToast(true);
+                }
+              }
+            }
+      
+            onHide();
+            setShowConfirmationToast(true);
+            fetchSales();
+          }
         } catch (error) {
-            onHide()
-            setShowErrorToast(true)
-            console.error(error)
+          onHide();
+          setShowErrorToast(true);
+          console.error(error);
         }
-    }
+      };
+      
+      
+    
 
 
     return (

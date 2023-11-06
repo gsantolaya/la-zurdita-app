@@ -11,7 +11,10 @@ import InputGroup from "react-bootstrap/InputGroup"
 import { BsSearch, BsPrinterFill } from "react-icons/bs"
 import { AddOrder } from './AddOrder'
 import { DeleteOrder } from './DeleteOrder'
+import { EditOrder } from './EditOrder'
 import { FinishOrder } from './FinishOrder'
+import logoNavbar from '../../components/img/Imagen_de_WhatsApp_2023-10-02_a_las_15.55.47_72f6c6c6-removebg-preview.png'
+import { FaEdit, FaTrashAlt, FaCheckCircle} from "react-icons/fa"
 
 export const OrdersScreen = () => {
 
@@ -26,13 +29,14 @@ export const OrdersScreen = () => {
     const [searchOption, setSearchOption] = useState('client')
 
     const [showAddOrderModal, setShowAddOrderModal] = useState(false)
-    const handleCloseAddOrderModal = () => setShowAddOrderModal(false)
+    const [showEditOrderModal, setShowEditOrderModal] = useState(false)
 
+    const handleCloseAddOrderModal = () => setShowAddOrderModal(false)
+    
     const [showDeleteSaleModal, setShowDeleteSaleModal] = useState(false)
     const [selectedSale, setSelectedSale] = useState(null)
 
     const [showFinishOrderModal, setShowFinishOrderModal] = useState(false)
-
 
     const store = TokenStorage()
     const navigate = useNavigate()
@@ -110,6 +114,13 @@ export const OrdersScreen = () => {
         setShowFinishOrderModal(false)
     }
 
+    const handleShowEditOrderModal = (sale) => {
+        setSelectedSale(sale)
+        setShowEditOrderModal(true)
+    }
+    const handleCloseEditOrderModal = () => {
+        setShowEditOrderModal(false)
+    }
     //MANEJO PARA BUSQUEDA Y FILTRO
     const handleSearchInputChange = (event) => {
         setSearchTerm(event.target.value)
@@ -211,12 +222,67 @@ export const OrdersScreen = () => {
         printWindow.close()
     }
 
-
-
+    const handlePrintCommand = (sale) => {
+        const printWindow = window.open('', '', 'width=800,height=600');
+        printWindow.document.write('<html><head><title>Detalle del Pedido</title></head><body>');
+        const img = new Image();
+        img.src = logoNavbar;
+        img.onload = function () {
+            printWindow.document.write('<div style="text-align: center; margin-bottom: 20px;">');
+            printWindow.document.write(`<img src="${logoNavbar}" alt="Logo" style="width: 600px;">`);
+            printWindow.document.write('</div>');
+            printWindow.document.write(`<h3 style="text-align: center; color: #5f3c23; margin-top: 20px;"><b><i>Tel: 3815932845</i></b></h3>`);
+            printWindow.document.write(`<p style="text-align: right"><b>${formatDate(sale.date)}</b></p>`);
+            const client = clients.find((client) => client._id === sale.client);
+            if (client) {
+                printWindow.document.write(`<p style="margin: 0px; padding:0px"><b>Cliente: </b>${client.firstName} ${client.lastName}</p>`);
+                printWindow.document.write('<p style="margin: 0px; padding:0px"><b>Teléfono: </b>' + client.phone + '</p>');
+                printWindow.document.write('<p style="margin-top: 0px; padding:0px"><b>Dirección: </b>' + client.address + '</p>');
+            }
+            printWindow.document.write('<table style="width: 100%; border-collapse: collapse; border: 1px solid black;">');
+            printWindow.document.write('<thead><tr>');
+            printWindow.document.write('<th style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">Variedad</th>');
+            printWindow.document.write('<th style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">Cantidad</th>');
+            printWindow.document.write('<th style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">Estado</th>');
+            printWindow.document.write('<th style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">Precio por unidad</th>');
+            printWindow.document.write('<th style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">Subtotal</th>');
+            printWindow.document.write('</tr></thead><tbody>');
+            const total = sale.products.reduce((acc, product) => {
+                const productItem = products.find((p) => p._id === product.product);
+                const subtotal = product.unitPrice * product.amount;
+                printWindow.document.write('<tr>');
+                printWindow.document.write('<td style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">');
+                printWindow.document.write(`${productItem ? `${productItem.type}` : ''}`);
+                printWindow.document.write('</td>');
+                printWindow.document.write('<td style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">');
+                printWindow.document.write(`${product.amount} x ${product.amountDescription}`);
+                printWindow.document.write('</td>');
+                printWindow.document.write('<td style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">');
+                printWindow.document.write(`${product.productStatus}`);
+                printWindow.document.write('</td>');
+                printWindow.document.write('<td style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">');
+                printWindow.document.write(`$${product.unitPrice}`);
+                printWindow.document.write('</td>');
+                printWindow.document.write('<td style="padding: 8px; border: 1px solid black; text-align: center; vertical-align: middle;">');
+                printWindow.document.write(`<b>$${subtotal}</b>`);
+                printWindow.document.write('</td>');
+                printWindow.document.write('</tr>');
+                return acc + subtotal;
+            }, 0);
+            printWindow.document.write('</tbody></table>');
+            printWindow.document.write(`<h2 style="text-align: right; margin-top: 20px;"><b>Total: $${total}</b></h2>`);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+            printWindow.close();
+        }
+    }
+    
     return (
         <>
             <div className='text-center p-5'>
                 <h1 className='mb-5 title clientTitle'><b>Pedidos en Curso</b></h1>
+
                 <div className='row d-md-flex'>
                     <div className='col-12 col-md-4 col-xl-3 my-2 my-md-0'>
                         <InputGroup>
@@ -266,7 +332,7 @@ export const OrdersScreen = () => {
                                 <th className='homeText text-center align-middle saleTitle'>Detalles del pedido</th>
                                 <th className='homeText text-center align-middle saleTitle'>Total</th>
                                 <th>
-                                    <Button className='m-1' variant="secondary" onClick={handlePrintTable}>
+                                    <Button className='m-1' variant="dark" onClick={handlePrintTable}>
                                         <span className="d-flex align-items-center justify-content-center">
                                             <BsPrinterFill />
                                         </span>
@@ -276,10 +342,9 @@ export const OrdersScreen = () => {
                         </thead>
                         <tbody>
                             {filteredSales.slice().sort(compareSales).map((sale) => {
-                                const product = products.find((product) => product._id === sale.product)
-                                const client = clients.find((client) => client._id === sale.client)
-                                const user = users.find((user) => user._id === sale.user)
-
+                                const client = clients.find((client) => client._id === sale.client);
+                                const user = users.find((user) => user._id === sale.user);
+                                let total = 0;
                                 return (
                                     <tr key={sale._id}>
                                         <td className="text-center align-middle">{formatDate(sale.date)}</td>
@@ -292,33 +357,55 @@ export const OrdersScreen = () => {
                                             <div><b>Teléfono:</b> {client ? `${client.phone}` : ''}</div>
                                         </td>
                                         <td className="text-center align-middle">
-                                            <div><b>Variedad:</b> {product ? `${product.type}` : ''}</div>
-                                            <div><b>Cantidad:</b> {sale.amount} - {sale.amountDescription}</div>
-                                            <div><b>Estado:</b> {sale.productStatus}</div>
+                                            {sale.products.map((product, index) => {
+                                                const productItem = products.find((p) => p._id === product.product);
+                                                let subtotal = product.unitPrice * product.amount;
+                                                total += subtotal;
+
+                                                return (
+                                                    <div key={index}>
+                                                        <div><b>Variedad:</b> {productItem ? productItem.type : ''} <b>Estado:</b> {product.productStatus}</div>
+                                                        <div><b>Cantidad:</b> {product.amount} x {product.amountDescription}</div>
+                                                        <div><b>Precio:</b> ${product.unitPrice} <b>Subtotal:</b> ${subtotal}</div>
+                                                        {index < sale.products.length - 1 && <hr />}
+                                                    </div>
+                                                );
+                                            })}
                                         </td>
-                                        <td className="text-center align-middle">${sale.unitPrice * sale.amount}</td>
+                                        <td className="text-center align-middle"><b>${total}</b></td>
                                         <td className="text-center align-middle">
+
                                             <Button className='m-1 editButton' variant="" onClick={() => handleShowFinishOrderModal(sale)}>
                                                 <span className="d-flex align-items-center justify-content-center">
-                                                    Finalizar pedido
+                                                    <FaCheckCircle/>
                                                 </span>
-
                                             </Button>
-                                            <Button className='m-1' variant="danger" onClick={() => handleShowDeletSaleModal(sale)} >
+                                            <Button className='m-1' variant="secondary" onClick={() => handleShowEditOrderModal(sale)}>
                                                 <span className="d-flex align-items-center justify-content-center">
-                                                    Eliminar
+                                                    <FaEdit />
+                                                </span>
+                                            </Button>
+                                            <Button className='m-1' variant="danger" onClick={() => handleShowDeletSaleModal(sale)}>
+                                                <span className="d-flex align-items-center justify-content-center">
+                                                    <FaTrashAlt />
+                                                </span>
+                                            </Button>
+                                            <Button className='m-1' variant="dark" onClick={() => handlePrintCommand(sale)}>
+                                                <span className="d-flex align-items-center justify-content-center">
+                                                    <BsPrinterFill />
                                                 </span>
                                             </Button>
                                         </td>
                                     </tr>
-                                )
+                                );
                             })}
                         </tbody>
                     </Table>
                 </div>
             </div>
             <AddOrder show={showAddOrderModal} onHide={handleCloseAddOrderModal} fetchSales={fetchSales} />
-            <DeleteOrder show={showDeleteSaleModal} onHide={handleCloseDeleteSaleModal} fetchSales={fetchSales} selectedSale={selectedSale} products={products} />
+            <DeleteOrder show={showDeleteSaleModal} onHide={handleCloseDeleteSaleModal} fetchSales={fetchSales} selectedSale={selectedSale} />
+            <EditOrder show={showEditOrderModal} onHide={handleCloseEditOrderModal} fetchSales={fetchSales} selectedSale={selectedSale} />
             <FinishOrder show={showFinishOrderModal} onHide={handleCloseFinishOrderModal} fetchSales={fetchSales} selectedSale={selectedSale} />
         </>
     )

@@ -483,24 +483,21 @@ export const SalesScreen = () => {
                     </div>
                 </div>
                 <div className='table-container mt-4' >
-                    <Table striped bordered hover className="scrollable-y-table scrollable-x-table">
+                <Table striped bordered hover>
                         <thead>
                             <tr>
                                 <th className='homeText text-center align-middle saleTitle'>Fecha</th>
                                 <th className='homeText text-center align-middle saleTitle'>Vendedor</th>
                                 <th className='homeText text-center align-middle saleTitle'>Cliente</th>
-                                <th className='homeText text-center align-middle saleTitle'>Cantidad</th>
-                                <th className='homeText text-center align-middle saleTitle'>Descripción</th>
-                                <th className='homeText text-center align-middle saleTitle'>Estado</th>
-                                <th className='homeText text-center align-middle saleTitle'>Precio Unitario</th>
+                                <th className='homeText text-center align-middle saleTitle'>Detalle de la venta</th>
                                 <th className='homeText text-center align-middle saleTitle'>Total</th>
                                 <th className='homeText text-center align-middle saleTitle'>Forma de pago</th>
-                                <th className='homeText text-center align-middle saleTitle'>Pago a cuenta</th>
+                                <th className='homeText text-center align-middle saleTitle'>Pago</th>
                                 <th className='homeText text-center align-middle saleTitle'>Saldo</th>
                                 <th className='homeText text-center align-middle saleTitle'>Estado</th>
                                 <th className='homeText text-center align-middle saleTitle'>Propina</th>
                                 <th>
-                                    <Button className='m-1' variant="secondary" onClick={handlePrintTable}>
+                                    <Button className='m-1' variant="dark" onClick={handlePrintTable}>
                                         <span className="d-flex align-items-center justify-content-center">
                                             <BsPrinterFill />
                                         </span>
@@ -510,9 +507,9 @@ export const SalesScreen = () => {
                         </thead>
                         <tbody>
                             {filteredSales.slice().sort(compareSales).map((sale) => {
-                                const product = products.find((product) => product._id === sale.product)
-                                const client = clients.find((client) => client._id === sale.client)
-                                const user = users.find((user) => user._id === sale.user)
+                                const client = clients.find((client) => client._id === sale.client);
+                                const user = users.find((user) => user._id === sale.user);
+                                let total = 0;
                                 return (
                                     <tr key={sale._id}>
                                         <td className="text-center align-middle">{formatTableDate(formatDate(sale.date))}</td>
@@ -522,22 +519,31 @@ export const SalesScreen = () => {
                                         <td className="text-center align-middle">
                                             {client ? `${client.lastName}, ${client.firstName}` : ''}
                                         </td>
-                                        <td className="text-center align-middle">{sale.amount} x {sale.amountDescription}</td>
                                         <td className="text-center align-middle">
-                                            {product ? `${product.type}` : ''}
+                                            {sale.products.map((product, index) => {
+                                                const productItem = products.find((p) => p._id === product.product);
+                                                let subtotal = product.unitPrice * product.amount;
+                                                total += subtotal;
+
+                                                return (
+                                                    <div key={index}>
+                                                        <div><b>Variedad:</b> {productItem ? productItem.type : ''} <b>Estado:</b> {product.productStatus}</div>
+                                                        <div><b>Cantidad:</b> {product.amount} x {product.amountDescription}</div>
+                                                        <div><b>Precio:</b> ${product.unitPrice} <b>Subtotal:</b> ${subtotal}</div>
+                                                        {index < sale.products.length - 1 && <hr />}
+                                                    </div>
+                                                );
+                                            })}
                                         </td>
-                                        <td className="text-center align-middle">{sale.productStatus}</td>
-                                        <td className="text-center align-middle">${sale.unitPrice}</td>
-                                        <td className="text-center align-middle">${sale.unitPrice * sale.amount}</td>
+                                        <td className="text-center align-middle"><b>${total}</b></td>
                                         <td className="text-center align-middle">{sale.wayToPay}</td>
                                         <td className="text-center align-middle">${sale.payment}</td>
-                                        <td className="text-center align-middle">
-                                            ${sale.payment ? sale.amount * sale.unitPrice - sale.payment : null}
-                                        </td>
+                                        <td className="text-center align-middle">${total - sale.payment}</td>
                                         <td className={`text-center align-middle ${sale.amount * sale.unitPrice - sale.payment > 0 ? 'red-text' : (sale.amount * sale.unitPrice - sale.payment === 0 ? 'green-text' : 'blue-text')}`}>
                                             {sale.amount * sale.unitPrice - sale.payment > 0 ? 'Saldo pendiente' : (sale.amount * sale.unitPrice - sale.payment === 0 ? 'Saldado' : 'Saldo a favor')}
                                         </td>
                                         <td className="text-center align-middle">${sale.tip || 0}</td>
+                                        <td className="text-center align-middle">
                                         <td className="text-center align-middle">
                                             <Button className='m-1 editButton' onClick={() => handleShowEditSaleModal(sale)} variant="">
                                                 <span className="d-flex align-items-center justify-content-center">
@@ -550,8 +556,9 @@ export const SalesScreen = () => {
                                                 </span>
                                             </Button>
                                         </td>
+                                        </td>
                                     </tr>
-                                )
+                                );
                             })}
                         </tbody>
                     </Table>

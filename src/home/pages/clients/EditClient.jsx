@@ -46,7 +46,8 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                 lastName: formData.lastName,
                 phone: formData.phone,
                 address: formData.address,
-                category: formData.category
+                category: formData.category,
+                balance: formData.balance
             }
 
             const config = {
@@ -151,7 +152,7 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                     <span className="validateSpan">Este campo es requerido.</span>
                                 )}
                             </Form.Group>
-                            <Form.Group className="formFields m-2 col-10" controlId="formBasicGender">
+                            <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicGender">
                                 <Form.Label className='modalLabel'>Categoría:</Form.Label>
                                 <Form.Select as="select" name="category" defaultValue={selectedClient.category} {...register("category", { required: true })}>
                                     <option value="">Selecciona una categoría</option>
@@ -160,6 +161,23 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                 </Form.Select>
                                 {errors.category && (
                                     <span className="validateSpan">Selecciona una categoría.</span>
+                                )}
+                            </Form.Group>
+                            <Form.Group className="formFields m-2 col-10 col-md-5" controlId={`formBasicPayment`}>
+                                <Form.Label className='modalLabel'>Balance:</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    min="0"
+                                    name={`balance`}
+                                    placeholder="00"
+                                    defaultValue={selectedClient.balance}
+                                    {...register(`balance`, {
+                                        required: false,
+                                        pattern: /^\d+(\.\d{1,2})?$/
+                                    })}
+                                />
+                                {errors[`balance`] && (
+                                    <span className="validateSpan">Ingrese un número válido.</span>
                                 )}
                             </Form.Group>
                             <Modal.Footer className="mt-3 col-12">
