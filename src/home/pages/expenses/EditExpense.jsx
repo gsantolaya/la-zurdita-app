@@ -18,10 +18,10 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const [showErrorEditExpenseToast, setShowErrorEditExpenseToast] = useState(false)
     const store = TokenStorage()
     const [additionalItemFields, setAdditionalItemFields] = useState([])
-    const [itemFieldsData, setItemFieldsData] = useState({})
+    // const [itemFieldsData, setItemFieldsData] = useState({})
     const [itemDescriptions, setItemDescriptions] = useState([])
-    const [subtotals, setSubtotals] = useState([0])
-    const [total, setTotal] = useState(0)
+    // const [subtotals, setSubtotals] = useState([0])
+    // const [total, setTotal] = useState(0)
     // const [nextId, setNextId] = useState(1)
 
     //MANEJO DE TOASTS
@@ -36,7 +36,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const handleOnHideModal = () => {
         reset()
         setAdditionalItemFields([])
-        setItemFieldsData({})
+        // setItemFieldsData({})
         onHide()
         // setNextId(1)
         // setSubtotals([0])
@@ -68,12 +68,12 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     }, [show, selectedExpense, reset]);
 
     //CALCULAR TOTAL
-    useEffect(() => {
-        const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
-            return accumulator + currentSubtotal;
-        }, 0);
-        setTotal(calculatedTotal);
-    }, [subtotals]);
+    // useEffect(() => {
+    //     const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
+    //         return accumulator + currentSubtotal;
+    //     }, 0);
+    //     setTotal(calculatedTotal);
+    // }, [subtotals]);
 
     // MANEJO LA FECHA
     const getCurrentDateInArgentina = () => {
@@ -103,16 +103,16 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const handleRemoveItemField = (id) => {
         const updatedFields = additionalItemFields.filter((field) => field.id !== id)
         setAdditionalItemFields(updatedFields)
-        setItemFieldsData((prevData) => {
-            const updatedData = { ...prevData }
-            delete updatedData[id]
-            return updatedData
-        })
-        setSubtotals((prevSubtotals) => {
-            const updatedSubtotals = [...prevSubtotals]
-            updatedSubtotals[id] = 0
-            return updatedSubtotals
-        })
+        // setItemFieldsData((prevData) => {
+        //     const updatedData = { ...prevData }
+        //     delete updatedData[id]
+        //     return updatedData
+        // })
+        // setSubtotals((prevSubtotals) => {
+        //     const updatedSubtotals = [...prevSubtotals]
+        //     updatedSubtotals[id] = 0
+        //     return updatedSubtotals
+        // })
     }
 
     // GUARDAR GASTO EN LA BASE DE DATOS
@@ -147,12 +147,12 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
             if (response.status === 200) {
                 setShowConfirmationEditExpenseToast(true);
                 // setNextId(1);
-                setItemFieldsData({});
+                // setItemFieldsData({});
                 onHide();
                 setAdditionalItemFields([]);
                 fetchExpenses();
-                setSubtotals([0])
-                setTotal(0)
+                // setSubtotals([0])
+                // setTotal(0)
             } else {
                 setShowErrorEditExpenseToast(true);
             }
