@@ -539,8 +539,8 @@ export const SalesScreen = () => {
                                         <td className="text-center align-middle">{sale.wayToPay}</td>
                                         <td className="text-center align-middle">${sale.payment}</td>
                                         <td className="text-center align-middle">${total - sale.payment}</td>
-                                        <td className={`text-center align-middle ${sale.amount * sale.unitPrice - sale.payment > 0 ? 'red-text' : (sale.amount * sale.unitPrice - sale.payment === 0 ? 'green-text' : 'blue-text')}`}>
-                                            {sale.amount * sale.unitPrice - sale.payment > 0 ? 'Saldo pendiente' : (sale.amount * sale.unitPrice - sale.payment === 0 ? 'Saldado' : 'Saldo a favor')}
+                                        <td className={`text-center align-middle ${total - sale.payment > 0 ? 'red-text' : (total - sale.payment === 0 ? 'green-text' : 'blue-text')}`}>
+                                            {total - sale.payment > 0 ? 'Saldo pendiente' : (total - sale.payment === 0 ? 'Saldado' : 'Saldo a favor')}
                                         </td>
                                         <td className="text-center align-middle">${sale.tip || 0}</td>
                                         <td className="text-center align-middle">

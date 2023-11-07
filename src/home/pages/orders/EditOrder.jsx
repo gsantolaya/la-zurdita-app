@@ -22,8 +22,10 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
   const [total, setTotal] = useState(0)
   const decodedToken = tokenIsValid()
   const userId = `${decodedToken.id}`
+
   // const [nextId, setNextId] = useState(1)
 
+  
   //MANEJO DE TOASTS
   const handleConfirmationEditOrderToastClose = () => {
     setShowConfirmationEditOrderToast(false)

@@ -380,11 +380,11 @@ export const OrdersScreen = () => {
                                                     <FaCheckCircle/>
                                                 </span>
                                             </Button>
-                                            <Button className='m-1' variant="secondary" onClick={() => handleShowEditOrderModal(sale)}>
+                                            {/* <Button className='m-1' variant="secondary" onClick={() => handleShowEditOrderModal(sale)}>
                                                 <span className="d-flex align-items-center justify-content-center">
                                                     <FaEdit />
                                                 </span>
-                                            </Button>
+                                            </Button> */}
                                             <Button className='m-1' variant="danger" onClick={() => handleShowDeletSaleModal(sale)}>
                                                 <span className="d-flex align-items-center justify-content-center">
                                                     <FaTrashAlt />
