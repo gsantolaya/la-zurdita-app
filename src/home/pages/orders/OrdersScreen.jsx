@@ -14,8 +14,8 @@ import { DeleteOrder } from './DeleteOrder'
 import { EditOrder } from './EditOrder'
 import { FinishOrder } from './FinishOrder'
 import logoNavbar from '../../components/img/Imagen_de_WhatsApp_2023-10-02_a_las_15.55.47_72f6c6c6-removebg-preview.png'
-import { FaEdit, FaTrashAlt, FaCheckCircle} from "react-icons/fa"
-
+import { FaTrashAlt, FaCheckCircle} from "react-icons/fa"
+// FaEdit, 
 export const OrdersScreen = () => {
 
     //DECLARACION DE CONSTANTES
@@ -114,10 +114,10 @@ export const OrdersScreen = () => {
         setShowFinishOrderModal(false)
     }
 
-    const handleShowEditOrderModal = (sale) => {
-        setSelectedSale(sale)
-        setShowEditOrderModal(true)
-    }
+    // const handleShowEditOrderModal = (sale) => {
+    //     setSelectedSale(sale)
+    //     setShowEditOrderModal(true)
+    // }
     const handleCloseEditOrderModal = () => {
         setShowEditOrderModal(false)
     }
