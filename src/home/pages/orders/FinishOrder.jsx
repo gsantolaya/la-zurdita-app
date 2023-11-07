@@ -29,48 +29,49 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
     const handleFinishOrderFormSubmit = async (formData) => {
         try {
             const clientId = selectedSale.client
-
+    
             // Fetch the client's data to get the previous balance
             const clientResponse = await axios.get(`/clients/${clientId}`, {
                 headers: {
                     "access-token": store.token,
                 },
             })
-
+    
             const clientData = clientResponse.data
-
+    
+            const previousBalance = clientData.balance;
+    
             // Calculate the new balance
-            const unitPrice = selectedSale.unitPrice
-            const amount = selectedSale.amount
-            const payment = formData.payment
-            const previousBalance = clientData.balance
-            const newBalance = previousBalance + (unitPrice * amount) - payment
-
+            const totalProductos = selectedSale.products.reduce((total, product) => {
+                const unitPrice = product.unitPrice; // Reemplaza con la propiedad real del precio unitario
+                const amount = product.amount; // Reemplaza con la propiedad real de la cantidad
+                const totalProducto = unitPrice * amount;
+                return total + totalProducto;
+            }, 0);
+    
+            const newBalance = previousBalance + (totalProductos - formData.payment);
+    
             // Update the sale
             const updatedSale = {
                 user: selectedSale.user,
                 date: selectedSale.date,
                 client: selectedSale.client,
-                type: selectedSale.type,
-                amount: selectedSale.amount,
-                amountDescription: selectedSale.amountDescription,
-                product: selectedSale.product,
-                productStatus: selectedSale.productStatus,
-                unitPrice: selectedSale.unitPrice,
+                products: selectedSale.products,
                 wayToPay: formData.wayToPay,
                 payment: formData.payment,
                 tip: formData.tip || 0,
                 status: "completed"
             }
-
+    
             // Update the sale using axios
             const saleUpdateConfig = {
                 headers: {
                     "access-token": store.token,
                 },
             }
+            console.log(updatedSale)
             await axios.put(`/sales/${selectedSale._id}`, updatedSale, saleUpdateConfig)
-
+    
             // Update the client's balance
             const balanceUpdateConfig = {
                 headers: {
@@ -78,7 +79,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                 },
             }
             await axios.patch(`/clients/${clientId}/balance`, { balance: newBalance }, balanceUpdateConfig)
-
+    
             onHide()
             setShowEditSaleConfirmationToast(true)
             reset()
@@ -88,6 +89,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
             setShowEditSaleErrorToast(true)
         }
     }
+    
 
     return (
         <>
@@ -95,7 +97,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
             <Modal show={show} onHide={handleOnHideModal}>
                 <Modal.Header className='modalHeader' closeButton>
                     <Modal.Title className="modalTitle">
-                        <strong>Modificar información</strong>
+                        <strong>Finalizar Pedido</strong>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='modalBody'>

@@ -1,5 +1,5 @@
 //IMPORTACIONES
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Button } from 'react-bootstrap'
 import Modal from 'react-bootstrap/Modal'
@@ -11,10 +11,14 @@ import { useForm } from "react-hook-form"
 
 export const AddClient = ({ show, onHide, fetchClients }) => {
 
+
     const { handleSubmit, register, reset, formState: { errors } } = useForm()
     const [showConfirmationAddClientToast, setShowConfirmationAddClientToast] = useState(false)
     const [showErrorAddClientToast, setShowErrorAddClientToast] = useState(false)
     const store = TokenStorage()
+    const [clients, setClients] = useState([])
+
+    const [addressExists, setAddressExists] = useState(false)
 
     const handleConfirmationAddClientToastClose = () => {
         setShowConfirmationAddClientToast(false)
@@ -26,9 +30,33 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
         reset()
         onHide()
     }
+    const checkAddressExists = (address) => {
+        return clients.some(client => client.address === address)
+    }
+    useEffect(() => {
+          axios.get('/clients', {
+            headers: {
+              "access-token": store.token
+            }
+          })
+            .then((response) => {
+              setClients(response.data)
+            })
+            .catch((error) => {
+              console.error(error)
+            })
+      }, [store.token])
+
+    console.log(clients)
     //FUNCION PARA AGREGAR UN CLIENTE
     const handleAddClientFormSubmit = async (data) => {
+        const { address } = data
         const isPaymentUpToDate = true
+        if (checkAddressExists(address)) {
+            setAddressExists(true)
+            return
+        }
+
         const newData = { ...data, isPaymentUpToDate }
         console.log(newData)
         try {
@@ -70,7 +98,8 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
                                 placeholder="Ingrese el nombre"
                                 {...register("firstName", { 
                                     required: true,
-                                    pattern: /^[A-Za-z\s]+$/})}
+                                    pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
+                                })}
                             />
                             {errors.firstName && errors.firstName.type === "required" && (
                                 <span className="validateSpan">Este campo es requerido.</span>
@@ -88,7 +117,8 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
                                 placeholder="Ingrese el apellido"
                                 {...register("lastName", { 
                                     required: true,
-                                    pattern: /^[A-Za-z\s]+$/})}
+                                    pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
+                                })}
                             />
                             {errors.lastName && errors.lastName.type === "required" && (
                                 <span className="validateSpan">Este campo es requerido.</span>
@@ -118,13 +148,16 @@ export const AddClient = ({ show, onHide, fetchClients }) => {
                             <Form.Label className='modalLabel'>Dirección:</Form.Label>
                             <Form.Control
                                 type="text"
-                                maxLength={20}
+                                maxLength={50}
                                 name="address"
                                 placeholder="Ingrese una dirección"
                                 {...register("address", { required: true })}
                             />
                             {errors.address && (
                                 <span className="validateSpan">Este campo es requerido.</span>
+                            )}
+                             {addressExists && (
+                                <span className="validateSpan">La dirección ya ha sido registrada.</span>
                             )}
                         </Form.Group>
                         <Form.Group className="formFields m-2 col-10" controlId="formBasicGender">
