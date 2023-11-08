@@ -18,7 +18,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const [showErrorEditExpenseToast, setShowErrorEditExpenseToast] = useState(false)
     const store = TokenStorage()
     const [additionalItemFields, setAdditionalItemFields] = useState([])
-    const [total, setTotal] = useState(0);
+    // const [total, setTotal] = useState(0);
     const [nextId, setNextId] = useState(1)
 
     //MANEJO DE TOASTS
@@ -54,11 +54,11 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                 defaultValues[`unitPrice${field.id}`] = selectedItem.unitPrice;
             });
             reset(defaultValues);
-            const calculatedTotal = newFields.reduce((accumulator, field) => {
-                const unitPrice = parseFloat(defaultValues[`unitPrice${field.id}`]) || 0;
-                return accumulator + unitPrice;
-            }, 0);
-            setTotal(calculatedTotal);
+            // const calculatedTotal = newFields.reduce((accumulator, field) => {
+            //     const unitPrice = parseFloat(defaultValues[`unitPrice${field.id}`]) || 0;
+            //     return accumulator + unitPrice;
+            // }, 0);
+            // setTotal(calculatedTotal);
         }
     }, [show, selectedExpense, reset]);
 
@@ -79,8 +79,6 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
         setAdditionalItemFields([...additionalItemFields, { id: newId}]);
         setNextId(newId + 1);
     }
-
-
     const handleRemoveItemField = (id) => {
         const updatedFields = additionalItemFields.filter((field) => field.id !== id)
         setAdditionalItemFields(updatedFields)
@@ -263,7 +261,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                 Agregar
                             </Button>
                         </div>
-                        <h2 className='modalLabel col-12 m-3 text-center'>Total Anterior: ${total}</h2>
+                        {/* <h2 className='modalLabel col-12 m-3 text-center'>Total Anterior: ${total}</h2> */}
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
                             <Form.Label className='modalLabel'>Pago:</Form.Label>
                             <Form.Control
