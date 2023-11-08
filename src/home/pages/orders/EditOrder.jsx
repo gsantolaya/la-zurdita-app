@@ -9,8 +9,7 @@ import { tokenIsValid } from '../../../utils/TokenIsValid'
 
 export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
   const [currentDate, setCurrentDate] = useState('')
-  const { handleSubmit, register, reset, setValue, watch, formState: { errors }} = useForm()
-  // , setValue, watch 
+  const { handleSubmit, register, reset, setValue, watch, formState: { errors } } = useForm()
   const [showConfirmationEditOrderToast, setShowConfirmationEditOrderToast] = useState(false)
   const [showErrorEditOrderToast, setShowErrorEditOrderToast] = useState(false)
   const store = TokenStorage()
@@ -19,8 +18,8 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
   // const [productDescriptions, setProductDescriptions] = useState([])
   const [clients, setClients] = useState([])
   const [products, setProducts] = useState([])
-  // const [subtotals, setSubtotals] = useState([0])
-  // const [total, setTotal] = useState(0)
+  const [subtotals, setSubtotals] = useState([0])
+  const [total, setTotal] = useState(0)
   const decodedToken = tokenIsValid()
   const userId = `${decodedToken.id}`
   const [nextId, setNextId] = useState(1)
@@ -40,10 +39,10 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
     reset()
     setAdditionalProductFields([])
     onHide()
-    // setProductFieldsData({})
+    setProductFieldsData({})
     // setNextId(1)
-    // setSubtotals([0])
-    // setTotal(0)
+    setSubtotals([0])
+    setTotal(0)
   }
 
   //OBTENER CLIENTES Y PRODUCTOS
@@ -79,13 +78,13 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
     if (show && selectedSale) {
       // Reset the form and additional item fields
       reset();
-
+  
       const newFields = selectedSale.products.map((product, index) => ({
         id: index,
         type: "unidad",
       }));
       setAdditionalProductFields(newFields);
-
+  
       const defaultValues = {};
       newFields.forEach((field, index) => {
         const selectedProduct = selectedSale.products[index];
@@ -95,17 +94,33 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
         defaultValues[`productStatus${field.id}`] = selectedProduct.productStatus;
         defaultValues[`unitPrice${field.id}`] = selectedProduct.unitPrice;
       });
+  
+      // Calcular los subtotales y el total aquí
+      const calculatedSubtotals = newFields.map((field, index) => {
+        const amount = parseFloat(defaultValues[`amount${field.id}`]);
+        const unitPrice = parseFloat(defaultValues[`unitPrice${field.id}`]);
+        return isNaN(amount) || isNaN(unitPrice) ? 0 : amount * unitPrice;
+      });
+  
+      setSubtotals(calculatedSubtotals);
+  
+      const calculatedTotal = calculatedSubtotals.reduce((accumulator, currentSubtotal) => {
+        return accumulator + currentSubtotal;
+      }, 0);
+      setTotal(calculatedTotal);
+  
       reset(defaultValues);
     }
   }, [show, selectedSale, reset]);
+  
 
   //CALCULAR TOTAL
-  // useEffect(() => {
-  //   const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
-  //     return accumulator + currentSubtotal;
-  //   }, 0);
-  //   setTotal(calculatedTotal);
-  // }, [subtotals]);
+  useEffect(() => {
+    const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
+      return accumulator + currentSubtotal;
+    }, 0);
+    setTotal(calculatedTotal);
+  }, [subtotals]);
 
   // MANEJO LA FECHA
   const getCurrentDateInArgentina = () => {
@@ -120,19 +135,27 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
 
   //FUNCIONES PARA AGREGAR O QUITAR UN ITEM:
   const handleAddProductField = () => {
-      const newId = nextId
-      setAdditionalProductFields([...additionalProductFields, { id: newId, type: "unidad" }])
-      setNextId(newId + 1)
+    const newId = nextId
+    setAdditionalProductFields([...additionalProductFields, { id: newId, type: "unidad" }])
+    setNextId(newId + 1)
   }
 
   const handleRemoveProductField = (id) => {
     const updatedFields = additionalProductFields.filter((field) => field.id !== id)
     setAdditionalProductFields(updatedFields)
-    // setProductFieldsData((prevData) => {
-    //   const updatedData = { ...prevData }
-    //   delete updatedData[id]
-    //   return updatedData
-    // })
+    // Establecer el valor correspondiente en el estado de subtotals a 0 en lugar de eliminarlo
+    setSubtotals((prevSubtotals) => {
+      const updatedSubtotals = [...prevSubtotals]
+      updatedSubtotals[id] = 0
+      return updatedSubtotals
+    })
+
+    // Eliminar los valores correspondientes al campo eliminado en el objeto de datos de producto
+    setProductFieldsData((prevData) => {
+      const updatedData = { ...prevData }
+      delete updatedData[id]
+      return updatedData
+    })
   }
 
 
@@ -176,19 +199,19 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
       if (selectedProduct) {
         setValue(`unitPrice${fieldId}`, selectedProduct.unitPrice)
         // Recalculate subtotal and total
-        // const amount = parseFloat(watch(`amount${fieldId}`))
-        // const unitPrice = selectedProduct.unitPrice
-        // const subtotal = isNaN(amount) ? 0 : amount * unitPrice
-        // setSubtotals((prevSubtotals) => {
-        //   const updatedSubtotals = [...prevSubtotals]
-        //   updatedSubtotals[fieldId] = subtotal
-        //   return updatedSubtotals
-        // })
+        const amount = parseFloat(watch(`amount${fieldId}`))
+        const unitPrice = selectedProduct.unitPrice
+        const subtotal = isNaN(amount) ? 0 : amount * unitPrice
+        setSubtotals((prevSubtotals) => {
+          const updatedSubtotals = [...prevSubtotals]
+          updatedSubtotals[fieldId] = subtotal
+          return updatedSubtotals
+        })
         // // Recalculate total
-        // const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
-        //   return accumulator + currentSubtotal
-        // }, 0)
-        // setTotal(calculatedTotal)
+        const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
+          return accumulator + currentSubtotal
+        }, 0)
+        setTotal(calculatedTotal)
       }
     } else {
       const selectedProductId = watch(`product${fieldId}`)
@@ -196,19 +219,19 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
       if (selectedProduct) {
         setValue(`unitPrice${fieldId}`, selectedProduct.retailPrice)
         // Recalculate subtotal and total
-        // const amount = parseFloat(watch(`amount${fieldId}`))
-        // const unitPrice = selectedProduct.retailPrice
-        // const subtotal = isNaN(amount) ? 0 : amount * unitPrice
-        // setSubtotals((prevSubtotals) => {
-        //   const updatedSubtotals = [...prevSubtotals]
-        //   updatedSubtotals[fieldId] = subtotal
-        //   return updatedSubtotals
-        // })
+        const amount = parseFloat(watch(`amount${fieldId}`))
+        const unitPrice = selectedProduct.retailPrice
+        const subtotal = isNaN(amount) ? 0 : amount * unitPrice
+        setSubtotals((prevSubtotals) => {
+          const updatedSubtotals = [...prevSubtotals]
+          updatedSubtotals[fieldId] = subtotal
+          return updatedSubtotals
+        })
         // Recalculate total
-        // const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
-        //   return accumulator + currentSubtotal
-        // }, 0)
-        // setTotal(calculatedTotal)
+        const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
+          return accumulator + currentSubtotal
+        }, 0)
+        setTotal(calculatedTotal)
       }
     }
   }
@@ -360,9 +383,9 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
         setShowConfirmationEditOrderToast(true);
         reset();
         // setNextId(1);
-        // setSubtotals([0]);
-        // setTotal(0);
-        // setProductFieldsData({});
+        setSubtotals([0]);
+        setTotal(0);
+        setProductFieldsData({});
         onHide();
         setAdditionalProductFields([]);
         fetchSales();
@@ -403,7 +426,7 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicClient">
                 <Form.Label className='modalLabel'>Cliente:</Form.Label>
                 <Form.Select as="select" name="client" defaultValue={selectedSale ? selectedSale.client : ''} {...register("client", { required: true })}
-                onChange={handleClientChange}
+                  onChange={handleClientChange}
                 >
                   <option value="">Selecciona un cliente</option>
                   {clients.map((client) => (
@@ -435,7 +458,7 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
               {additionalProductFields.map((field, index) => (
                 <div key={field.id} className='col-12 row my-2 align-items-center justify-content-between'>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-3" controlId={`formBasicDescription${field.id}`}
-                  onChange={handleProductChange}
+                    onChange={handleProductChange}
                   >
                     <Form.Label className='modalLabel'>Variedad:</Form.Label>
                     <Form.Select
@@ -475,14 +498,14 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                         required: true,
                         pattern: /^\d+(\.\d{1,2})?$/
                       })}
-                    // onChange={(e) => {
-                    //   const amount = parseFloat(e.target.value)
-                    //   const unitPrice = parseFloat(watch(`unitPrice${field.id}`))
-                    //   const subtotal = isNaN(amount) || isNaN(unitPrice) ? 0 : amount * unitPrice
-                    //   const updatedSubtotals = [...subtotals]
-                    //   updatedSubtotals[field.id] = subtotal
-                    //   setSubtotals(updatedSubtotals)
-                    // }}
+                      onChange={(e) => {
+                        const amount = parseFloat(e.target.value)
+                        const unitPrice = parseFloat(watch(`unitPrice${field.id}`))
+                        const subtotal = isNaN(amount) || isNaN(unitPrice) ? 0 : amount * unitPrice
+                        const updatedSubtotals = [...subtotals]
+                        updatedSubtotals[field.id] = subtotal
+                        setSubtotals(updatedSubtotals)
+                      }}
                     />
                     {errors[`amount${field.id}`] && (
                       <span className="validateSpan">Ingrese un número válido.</span>
@@ -532,14 +555,14 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                         required: false,
                         pattern: /^\d+(\.\d{1,2})?$/
                       })}
-                    // onChange={(e) => {
-                    //   const unitPrice = parseFloat(e.target.value)
-                    //   const amount = parseFloat(watch(`amount${field.id}`))
-                    //   const subtotal = isNaN(amount) || isNaN(unitPrice) ? 0 : amount * unitPrice
-                    //   const updatedSubtotals = [...subtotals]
-                    //   updatedSubtotals[field.id] = subtotal
-                    //   setSubtotals(updatedSubtotals)
-                    // }}
+                      onChange={(e) => {
+                        const unitPrice = parseFloat(e.target.value)
+                        const amount = parseFloat(watch(`amount${field.id}`))
+                        const subtotal = isNaN(amount) || isNaN(unitPrice) ? 0 : amount * unitPrice
+                        const updatedSubtotals = [...subtotals]
+                        updatedSubtotals[field.id] = subtotal
+                        setSubtotals(updatedSubtotals)
+                      }}
                     />
                     {errors[`unitPrice${field.id}`] && (
                       <span className="validateSpan">Ingrese un número válido.</span>
@@ -548,14 +571,14 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                   <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemoveProductField(field.id)} style={{ width: '40px', height: '40px' }}>
                     <FaTrashAlt />
                   </Button>
-                  {/* <h6 className='modalLabel'>Subtotal: ${subtotals[field.id]}</h6> */}
+                  <h6 className='modalLabel'>Subtotal: ${subtotals[field.id]}</h6>
                 </div>
               ))}
               <Button className='buttonsFormAddSale w-25' variant="secondary" type="button" onClick={handleAddProductField}>
                 Agregar
               </Button>
             </div>
-            {/* <h4 className='modalLabel'>Total: ${total}</h4> */}
+            <h4 className='modalLabel'>Total: ${total}</h4>
             <Modal.Footer className="mt-3 col-12">
               <Button className='buttonsFormAddSale m-2 w-100' variant="secondary" type="submit">
                 Modificar Pedido
