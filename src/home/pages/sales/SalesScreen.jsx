@@ -256,48 +256,76 @@ export const SalesScreen = () => {
     //FUNCION PARA IMPRIMIR LA TABLA
     const handlePrintTable = () => {
         const printWindow = window.open('', '', 'width=800,height=600')
-        printWindow.document.write('<html><head><title>Tabla de Ventas</title></head><body>')
-        printWindow.document.write('<h1>Ventas</h1>')
-        printWindow.document.write('<table border="1">')
-        printWindow.document.write('<thead><tr>')
-        printWindow.document.write('<th>Fecha</th>')
-        printWindow.document.write('<th>Vendedor</th>')
-        printWindow.document.write('<th>Cliente</th>')
-        printWindow.document.write('<th>Cantidad</th>')
-        printWindow.document.write('<th>Descripción</th>')
-        printWindow.document.write('<th>Estado</th>')
-        printWindow.document.write('<th>Precio Unitario</th>')
-        printWindow.document.write('<th>Total</th>')
-        printWindow.document.write('<th>Forma de pago</th>')
-        printWindow.document.write('<th>Pago a cuenta</th>')
-        printWindow.document.write('<th>Saldo</th>')
-        printWindow.document.write('<th>Propina</th>')
-        printWindow.document.write('</tr></thead><tbody>')
-        filteredSales.slice().sort(compareSales).forEach((sale) => {
-            const product = products.find((product) => product._id === sale.product)
-            const client = clients.find((client) => client._id === sale.client)
-            const user = users.find((user) => user._id === sale.user)
-            printWindow.document.write('<tr>')
-            printWindow.document.write(`<td>${formatTableDate(formatDate(sale.date))}</td>`)
-            printWindow.document.write(`<td>${user ? `${user.lastName}, ${user.firstName}` : ''}</td>`)
-            printWindow.document.write(`<td>${client ? `${client.lastName}, ${client.firstName}` : ''}</td>`)
-            printWindow.document.write(`<td>${sale.amount}</td>`)
-            printWindow.document.write(`<td>${product ? `${product.type}` : ''}</td>`)
-            printWindow.document.write(`<td>${sale.productStatus}</td>`)
-            printWindow.document.write(`<td>${sale.unitPrice}</td>`)
-            printWindow.document.write(`<td>${sale.unitPrice * sale.amount}</td>`)
-            printWindow.document.write(`<td>${sale.wayToPay}</td>`)
-            printWindow.document.write(`<td>${sale.payment}</td>`)
-            printWindow.document.write(`<td>${sale.amount * sale.unitPrice - sale.payment}</td>`)
-            printWindow.document.write(`<td>${sale.tip || 0}</td>`)
-            printWindow.document.write('</tr>')
-        })
-        printWindow.document.write('</tbody></table>')
-        printWindow.document.write('</body></html>')
-        printWindow.document.close()
-        printWindow.print()
-        printWindow.close()
+    
+        // Crear el contenido de la tabla que deseas imprimir
+        const tableContent = `
+            <table border="1" style="width: 100%; text-align: center;">
+                <thead>
+                    <tr>
+                        <th class="homeText saleTitle">Fecha</th>
+                        <th class="homeText saleTitle">Vendedor</th>
+                        <th class="homeText saleTitle">Cliente</th>
+                        <th class="homeText saleTitle">Detalle de la venta</th>
+                        <th class="homeText saleTitle">Total</th>
+                        <th class="homeText saleTitle">Forma de pago</th>
+                        <th class="homeText saleTitle">Pago</th>
+                        <th class="homeText saleTitle">Saldo</th>
+                        <th class="homeText saleTitle">Estado</th>
+                        <th class="homeText saleTitle">Propina</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredSales.slice().sort(compareSales).map((sale) => {
+                        const client = clients.find((client) => client._id === sale.client);
+                        const user = users.find((user) => user._id === sale.user);
+                        let total = 0;
+                        return `
+                            <tr>
+                                <td class="homeText">${formatTableDate(formatDate(sale.date))}</td>
+                                <td class="homeText">${user ? `${user.lastName}, ${user.firstName}` : ''}</td>
+                                <td class="homeText">${client ? `${client.lastName}, ${client.firstName}` : ''}</td>
+                                <td class="homeText" style="text-align: left;">
+                                    ${sale.products.map((product, index) => {
+                                        const productItem = products.find((p) => p._id === product.product);
+                                        let subtotal = product.unitPrice * product.amount;
+                                        total += subtotal;
+    
+                                        return `
+                                            <div>
+                                                <div><b>Variedad:</b> ${productItem ? productItem.type : ''} <b>Estado:</b> ${product.productStatus}</div>
+                                                <div><b>Cantidad:</b> ${product.amount} x ${product.amountDescription}</div>
+                                                <div><b>Precio:</b> $${product.unitPrice} <b>Subtotal:</b> $${subtotal}</div>
+                                                ${index < sale.products.length - 1 ? '<hr />' : ''}
+                                            </div>
+                                        `;
+                                    })}
+                                </td>
+                                <td class="homeText"><b>$${total}</b></td>
+                                <td class="homeText">${sale.wayToPay}</td>
+                                <td class="homeText">$${sale.payment}</td>
+                                <td class="homeText">$${total - sale.payment}</td>
+                                <td class="homeText ${total - sale.payment > 0 ? 'red-text' : (total - sale.payment === 0 ? 'green-text' : 'blue-text')}">
+                                    ${total - sale.payment > 0 ? 'Saldo pendiente' : (total - sale.payment === 0 ? 'Saldado' : 'Saldo a favor')}
+                                </td>
+                                <td class="homeText">$${sale.tip || 0}</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+    
+        // Agregar el contenido de la tabla al documento de la ventana emergente
+        printWindow.document.write(tableContent);
+    
+        // Cerrar la estructura HTML y mostrar la ventana emergente para imprimir
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+        printWindow.close();
     }
+    
+
 
     //FUNCION PARA IMPRIMIR EL RESUMEN
     const handlePrintSummary = () => {
@@ -483,7 +511,7 @@ export const SalesScreen = () => {
                     </div>
                 </div>
                 <div className='table-container mt-4' >
-                <Table striped bordered hover>
+                    <Table striped bordered hover>
                         <thead>
                             <tr>
                                 <th className='homeText text-center align-middle saleTitle'>Fecha</th>
@@ -544,18 +572,18 @@ export const SalesScreen = () => {
                                         </td>
                                         <td className="text-center align-middle">${sale.tip || 0}</td>
                                         <td className="text-center align-middle">
-                                        <td className="text-center align-middle">
-                                            <Button className='m-1 editButton' onClick={() => handleShowEditSaleModal(sale)} variant="">
-                                                <span className="d-flex align-items-center justify-content-center">
-                                                    <FaEdit />
-                                                </span>
-                                            </Button>
-                                            <Button className='m-1' onClick={() => handleShowDeletSaleModal(sale)} variant="danger">
-                                                <span className="d-flex align-items-center justify-content-center">
-                                                    <FaTrashAlt />
-                                                </span>
-                                            </Button>
-                                        </td>
+                                            <td className="text-center align-middle">
+                                                <Button className='m-1 editButton' onClick={() => handleShowEditSaleModal(sale)} variant="">
+                                                    <span className="d-flex align-items-center justify-content-center">
+                                                        <FaEdit />
+                                                    </span>
+                                                </Button>
+                                                <Button className='m-1' onClick={() => handleShowDeletSaleModal(sale)} variant="danger">
+                                                    <span className="d-flex align-items-center justify-content-center">
+                                                        <FaTrashAlt />
+                                                    </span>
+                                                </Button>
+                                            </td>
                                         </td>
                                     </tr>
                                 );
