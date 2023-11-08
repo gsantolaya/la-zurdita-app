@@ -116,10 +116,12 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
 
   //CALCULAR TOTAL
   useEffect(() => {
-    const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
+    const validSubtotals = subtotals.filter(subtotal => !isNaN(subtotal));
+    const calculatedTotal = validSubtotals.reduce((accumulator, currentSubtotal) => {
       return accumulator + currentSubtotal;
     }, 0);
     setTotal(calculatedTotal);
+    
   }, [subtotals]);
 
   // MANEJO LA FECHA
