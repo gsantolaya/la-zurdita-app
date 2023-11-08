@@ -465,7 +465,7 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                       as="select"
                       name={`product${field.id}`}
                       {...register(`product${field.id}`, { required: true })}
-                      // value={productFieldsData[field.id]?.product || ''}
+                      defaultValue={productFieldsData[field.id]?.product || ''}
                       onChange={(e) => {
                         const newValue = e.target.value
                         setProductFieldsData((prevData) => ({
