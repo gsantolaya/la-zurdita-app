@@ -41,7 +41,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
         if (show && selectedExpense) {
             reset();
             const newFields = selectedExpense.items.map((item, index) => ({
-                id: index + 1,
+                id: index,
             }));
             setAdditionalItemFields(newFields);
 
@@ -76,7 +76,10 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     //FUNCIONES PARA AGREGAR O QUITAR UN ITEM:
     const handleAddItemField = () => {
         const newId = nextId;
-        setAdditionalItemFields([...additionalItemFields, { id: newId}]);
+        const newItemField = {
+            id: newId,
+        };
+        setAdditionalItemFields([...additionalItemFields, newItemField]);
         setNextId(newId + 1);
     }
     const handleRemoveItemField = (id) => {

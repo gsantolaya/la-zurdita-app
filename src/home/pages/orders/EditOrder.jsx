@@ -81,7 +81,7 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
       reset();
 
       const newFields = selectedSale.products.map((product, index) => ({
-        id: index + 1,
+        id: index,
         type: "unidad",
       }));
       setAdditionalProductFields(newFields);
