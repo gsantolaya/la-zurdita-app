@@ -9,13 +9,13 @@ import { tokenIsValid } from '../../../utils/TokenIsValid'
 
 export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
   const [currentDate, setCurrentDate] = useState('')
-  const { handleSubmit, register, reset, formState: { errors }} = useForm()
+  const { handleSubmit, register, reset, setValue, watch, formState: { errors }} = useForm()
   // , setValue, watch 
   const [showConfirmationEditOrderToast, setShowConfirmationEditOrderToast] = useState(false)
   const [showErrorEditOrderToast, setShowErrorEditOrderToast] = useState(false)
   const store = TokenStorage()
   const [additionalProductFields, setAdditionalProductFields] = useState([])
-  // const [productFieldsData, setProductFieldsData] = useState({})
+  const [productFieldsData, setProductFieldsData] = useState({})
   // const [productDescriptions, setProductDescriptions] = useState([])
   const [clients, setClients] = useState([])
   const [products, setProducts] = useState([])
@@ -137,81 +137,81 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
 
 
   // MODIFICAR TIPO DE VENTA AL SELECCIONAR UN CLIENTE
-  // const handleClientChange = (event) => {
-  //   const selectedClientId = event.target.value
-  //   const selectedClient = clients.find((client) => client._id === selectedClientId)
+  const handleClientChange = (event) => {
+    const selectedClientId = event.target.value
+    const selectedClient = clients.find((client) => client._id === selectedClientId)
 
-  //   if (selectedClient) {
-  //     const statusSelect = document.getElementById("formBasicStatus")
-  //     if (statusSelect) {
-  //       statusSelect.value = selectedClient.category
-  //     }
-  //     setValue("type", selectedClient.category === 'mayorista' ? 'mayorista' : 'minorista')
-  //   } else {
-  //     alert('Error, cliente no encontrado')
-  //   }
-  // }
+    if (selectedClient) {
+      const statusSelect = document.getElementById("formBasicStatus")
+      if (statusSelect) {
+        statusSelect.value = selectedClient.category
+      }
+      setValue("type", selectedClient.category === 'mayorista' ? 'mayorista' : 'minorista')
+    } else {
+      alert('Error, cliente no encontrado')
+    }
+  }
 
   //ESTABLECER EL PRECIO DEL PRODUCTO POR UNIDAD SI ES UNA VENTA MAYORISTA AL SELECCIONAR UNA VARIEDAD
-  // const typeValue = watch("type")
-  // const handleProductChange = (event, fieldId) => {
-  //   const productId = event.target.value
-  //   const selectedProduct = products.find((product) => product._id === productId)
+  const typeValue = watch("type")
+  const handleProductChange = (event, fieldId) => {
+    const productId = event.target.value
+    const selectedProduct = products.find((product) => product._id === productId)
 
-  //   if (selectedProduct) {
-  //     const unitPrice = typeValue === 'mayorista' ? selectedProduct.wholesalePrice : selectedProduct.retailPrice
-  //     setValue(`unitPrice${fieldId}`, unitPrice)
-  //   } else {
-  //     setValue(`unitPrice${fieldId}`, '')
-  //   }
-  // }
+    if (selectedProduct) {
+      const unitPrice = typeValue === 'mayorista' ? selectedProduct.wholesalePrice : selectedProduct.retailPrice
+      setValue(`unitPrice${fieldId}`, unitPrice)
+    } else {
+      setValue(`unitPrice${fieldId}`, '')
+    }
+  }
 
   ///ESTABLECER EL PRECIO DEL PRODUCTO POR UNIDAD SI ES UNA VENTA MINORISTA
-  // const handleAmountDescriptionChange = (event, fieldId) => {
-  //   const selectedAmountDescription = event.target.value
+  const handleAmountDescriptionChange = (event, fieldId) => {
+    const selectedAmountDescription = event.target.value
 
-  //   if (selectedAmountDescription === 'unidad') {
-  //     const selectedProductId = watch(`product${fieldId}`)
-  //     const selectedProduct = products.find((product) => product._id === selectedProductId)
-  //     if (selectedProduct) {
-  //       setValue(`unitPrice${fieldId}`, selectedProduct.unitPrice)
-  // Recalculate subtotal and total
-  // const amount = parseFloat(watch(`amount${fieldId}`))
-  // const unitPrice = selectedProduct.unitPrice
-  // const subtotal = isNaN(amount) ? 0 : amount * unitPrice
-  // setSubtotals((prevSubtotals) => {
-  //   const updatedSubtotals = [...prevSubtotals]
-  //   updatedSubtotals[fieldId] = subtotal
-  //   return updatedSubtotals
-  // })
-  // Recalculate total
-  // const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
-  //   return accumulator + currentSubtotal
-  // }, 0)
-  // setTotal(calculatedTotal)
-  //   }
-  // } else {
-  //   const selectedProductId = watch(`product${fieldId}`)
-  //   const selectedProduct = products.find((product) => product._id === selectedProductId)
-  //   if (selectedProduct) {
-  //     setValue(`unitPrice${fieldId}`, selectedProduct.retailPrice)
-  // Recalculate subtotal and total
-  // const amount = parseFloat(watch(`amount${fieldId}`))
-  // const unitPrice = selectedProduct.retailPrice
-  // const subtotal = isNaN(amount) ? 0 : amount * unitPrice
-  // setSubtotals((prevSubtotals) => {
-  //   const updatedSubtotals = [...prevSubtotals]
-  //   updatedSubtotals[fieldId] = subtotal
-  //   return updatedSubtotals
-  // })
-  // // Recalculate total
-  // const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
-  //   return accumulator + currentSubtotal
-  // }, 0)
-  // setTotal(calculatedTotal)
-  //  }
-  //  }
-  // }
+    if (selectedAmountDescription === 'unidad') {
+      const selectedProductId = watch(`product${fieldId}`)
+      const selectedProduct = products.find((product) => product._id === selectedProductId)
+      if (selectedProduct) {
+        setValue(`unitPrice${fieldId}`, selectedProduct.unitPrice)
+        // Recalculate subtotal and total
+        // const amount = parseFloat(watch(`amount${fieldId}`))
+        // const unitPrice = selectedProduct.unitPrice
+        // const subtotal = isNaN(amount) ? 0 : amount * unitPrice
+        // setSubtotals((prevSubtotals) => {
+        //   const updatedSubtotals = [...prevSubtotals]
+        //   updatedSubtotals[fieldId] = subtotal
+        //   return updatedSubtotals
+        // })
+        // // Recalculate total
+        // const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
+        //   return accumulator + currentSubtotal
+        // }, 0)
+        // setTotal(calculatedTotal)
+      }
+    } else {
+      const selectedProductId = watch(`product${fieldId}`)
+      const selectedProduct = products.find((product) => product._id === selectedProductId)
+      if (selectedProduct) {
+        setValue(`unitPrice${fieldId}`, selectedProduct.retailPrice)
+        // Recalculate subtotal and total
+        // const amount = parseFloat(watch(`amount${fieldId}`))
+        // const unitPrice = selectedProduct.retailPrice
+        // const subtotal = isNaN(amount) ? 0 : amount * unitPrice
+        // setSubtotals((prevSubtotals) => {
+        //   const updatedSubtotals = [...prevSubtotals]
+        //   updatedSubtotals[fieldId] = subtotal
+        //   return updatedSubtotals
+        // })
+        // Recalculate total
+        // const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
+        //   return accumulator + currentSubtotal
+        // }, 0)
+        // setTotal(calculatedTotal)
+      }
+    }
+  }
 
   //FUNCION PARA CORROBORAR STOCK
   const checkStockSufficiency = async (data) => {
@@ -403,7 +403,7 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
               <Form.Group className="formFields my-2 px-2 col-10 col-md-4" controlId="formBasicClient">
                 <Form.Label className='modalLabel'>Cliente:</Form.Label>
                 <Form.Select as="select" name="client" defaultValue={selectedSale ? selectedSale.client : ''} {...register("client", { required: true })}
-                // onChange={handleClientChange}
+                onChange={handleClientChange}
                 >
                   <option value="">Selecciona un cliente</option>
                   {clients.map((client) => (
@@ -435,23 +435,22 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
               {additionalProductFields.map((field, index) => (
                 <div key={field.id} className='col-12 row my-2 align-items-center justify-content-between'>
                   <Form.Group className="formFields my-2 px-2 col-12 col-md-3" controlId={`formBasicDescription${field.id}`}
-                  // onChange={handleProductChange}
+                  onChange={handleProductChange}
                   >
                     <Form.Label className='modalLabel'>Variedad:</Form.Label>
                     <Form.Select
                       as="select"
                       name={`product${field.id}`}
-                      // defaultValue={productDescriptions[field.id - 1] || ''}
                       {...register(`product${field.id}`, { required: true })}
                       // value={productFieldsData[field.id]?.product || ''}
-                      // onChange={(e) => {
-                      //   const newValue = e.target.value
-                      //   setProductDescriptions((prevDescriptions) => {
-                      //     const updatedDescriptions = [...prevDescriptions]
-                      //     updatedDescriptions[field.id - 1] = newValue
-                      //     return updatedDescriptions
-                      //   })
-                      // }}
+                      onChange={(e) => {
+                        const newValue = e.target.value
+                        setProductFieldsData((prevData) => ({
+                          ...prevData,
+                          [field.id]: { ...prevData[field.id], product: newValue },
+                        }))
+                        handleProductChange(e, field.id)
+                      }}
                     >
                       <option value="">Selecciona un producto</option>
                       {products.map((product) => (
@@ -498,6 +497,7 @@ export const EditOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                       {...register(`amountDescription${field.id}`, {
                         required: true
                       })}
+                      onChange={(e) => handleAmountDescriptionChange(e, field.id)}
                     >
                       <option value="docena">Docena</option>
                       {selectedSale.type === "minorista" && (
