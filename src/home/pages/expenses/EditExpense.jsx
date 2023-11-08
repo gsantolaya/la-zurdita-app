@@ -18,11 +18,8 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const [showErrorEditExpenseToast, setShowErrorEditExpenseToast] = useState(false)
     const store = TokenStorage()
     const [additionalItemFields, setAdditionalItemFields] = useState([])
-    // const [itemFieldsData, setItemFieldsData] = useState({})
-    const [itemDescriptions, setItemDescriptions] = useState([])
-    // const [subtotals, setSubtotals] = useState([0])
-    // const [total, setTotal] = useState(0)
-    // const [nextId, setNextId] = useState(1)
+    const [total, setTotal] = useState(0);
+    const [nextId, setNextId] = useState(1)
 
     //MANEJO DE TOASTS
     const handleConfirmationEditExpenseToastClose = () => {
@@ -36,22 +33,15 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const handleOnHideModal = () => {
         reset()
         setAdditionalItemFields([])
-        // setItemFieldsData({})
         onHide()
-        // setNextId(1)
-        // setSubtotals([0])
-        // setTotal(0)
     }
 
 
     useEffect(() => {
         if (show && selectedExpense) {
-            // Reset the form and additional item fields
             reset();
-
             const newFields = selectedExpense.items.map((item, index) => ({
                 id: index + 1,
-                type: "unidad",
             }));
             setAdditionalItemFields(newFields);
 
@@ -64,55 +54,36 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                 defaultValues[`unitPrice${field.id}`] = selectedItem.unitPrice;
             });
             reset(defaultValues);
+            const calculatedTotal = newFields.reduce((accumulator, field) => {
+                const unitPrice = parseFloat(defaultValues[`unitPrice${field.id}`]) || 0;
+                return accumulator + unitPrice;
+            }, 0);
+            setTotal(calculatedTotal);
         }
     }, [show, selectedExpense, reset]);
-
-    //CALCULAR TOTAL
-    // useEffect(() => {
-    //     const calculatedTotal = subtotals.reduce((accumulator, currentSubtotal) => {
-    //         return accumulator + currentSubtotal;
-    //     }, 0);
-    //     setTotal(calculatedTotal);
-    // }, [subtotals]);
 
     // MANEJO LA FECHA
     const getCurrentDateInArgentina = () => {
         const now = new Date()
-        // Ajusta la fecha al huso horario de Argentina (GMT-3)
         now.setHours(now.getHours() - 3)
-        // Formatea la fecha como "YYYY-MM-DD" para el input date
         const formattedDate = now.toISOString().split('T')[0]
         setCurrentDate(formattedDate)
     }
-    // Effect to get current date
     useEffect(() => {
         getCurrentDateInArgentina()
     }, [])
 
     //FUNCIONES PARA AGREGAR O QUITAR UN ITEM:
-    // const handleAddItemField = () => {
-    //     const newId = nextId
-    //     setAdditionalItemFields([...additionalItemFields, { id: newId, type: "unidad" }])
-    //     setItemFieldsData(prevData => ({
-    //         ...prevData,
-    //         [newId]: {},
-    //     }))
-    //     setNextId(newId + 1)
-    // }
+    const handleAddItemField = () => {
+        const newId = nextId;
+        setAdditionalItemFields([...additionalItemFields, { id: newId}]);
+        setNextId(newId + 1);
+    }
+
 
     const handleRemoveItemField = (id) => {
         const updatedFields = additionalItemFields.filter((field) => field.id !== id)
         setAdditionalItemFields(updatedFields)
-        // setItemFieldsData((prevData) => {
-        //     const updatedData = { ...prevData }
-        //     delete updatedData[id]
-        //     return updatedData
-        // })
-        // setSubtotals((prevSubtotals) => {
-        //     const updatedSubtotals = [...prevSubtotals]
-        //     updatedSubtotals[id] = 0
-        //     return updatedSubtotals
-        // })
     }
 
     // GUARDAR GASTO EN LA BASE DE DATOS
@@ -146,13 +117,9 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
             });
             if (response.status === 200) {
                 setShowConfirmationEditExpenseToast(true);
-                // setNextId(1);
-                // setItemFieldsData({});
                 onHide();
                 setAdditionalItemFields([]);
                 fetchExpenses();
-                // setSubtotals([0])
-                // setTotal(0)
             } else {
                 setShowErrorEditExpenseToast(true);
             }
@@ -234,16 +201,8 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                             type="text"
                                             name={`description${field.id}`}
                                             placeholder="Ingrese la descripción"
-                                            defaultValue={itemDescriptions[field.id - 1] || ''}
+                                            defaultValue=""
                                             {...register(`description${field.id}`, { required: true })}
-                                            onChange={(e) => {
-                                                const newValue = e.target.value
-                                                setItemDescriptions((prevDescriptions) => {
-                                                    const updatedDescriptions = [...prevDescriptions]
-                                                    updatedDescriptions[field.id - 1] = newValue
-                                                    return updatedDescriptions
-                                                })
-                                            }}
                                         />
                                         {errors.description && errors.provider.type === "required" && (
                                             <span className="validateSpan">Este campo es requerido.</span>
@@ -300,11 +259,11 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                     </Button>
                                 </div>
                             ))}
-                            {/* <Button className='buttonsFormAddSale w-25' variant="secondary" type="button" onClick={handleAddItemField}>
+                            <Button className='buttonsFormAddSale w-25' variant="secondary" type="button" onClick={handleAddItemField}>
                                 Agregar
-                            </Button> */}
+                            </Button>
                         </div>
-                        {/* <h2 className='modalLabel col-12 m-3 text-center'>Total: ${total}</h2> */}
+                        <h2 className='modalLabel col-12 m-3 text-center'>Total Anterior: ${total}</h2>
                         <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
                             <Form.Label className='modalLabel'>Pago:</Form.Label>
                             <Form.Control
