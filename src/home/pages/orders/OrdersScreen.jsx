@@ -14,7 +14,7 @@ import { DeleteOrder } from './DeleteOrder'
 import { EditOrder } from './EditOrder'
 import { FinishOrder } from './FinishOrder'
 import logoNavbar from '../../components/img/Imagen_de_WhatsApp_2023-10-02_a_las_15.55.47_72f6c6c6-removebg-preview.png'
-import { FaEdit, FaTrashAlt, FaCheckCircle} from "react-icons/fa"
+import { FaEdit, FaTrashAlt, FaCheckCircle } from "react-icons/fa"
 
 export const OrdersScreen = () => {
 
@@ -32,7 +32,7 @@ export const OrdersScreen = () => {
     const [showEditOrderModal, setShowEditOrderModal] = useState(false)
 
     const handleCloseAddOrderModal = () => setShowAddOrderModal(false)
-    
+
     const [showDeleteSaleModal, setShowDeleteSaleModal] = useState(false)
     const [selectedSale, setSelectedSale] = useState(null)
 
@@ -192,6 +192,7 @@ export const OrdersScreen = () => {
         printWindow.document.write('<h1>Nuestros Pedidos</h1>')
         printWindow.document.write('<table border="1">')
         printWindow.document.write('<thead><tr>')
+        printWindow.document.write('<th>Número</th>')
         printWindow.document.write('<th>Fecha</th>')
         printWindow.document.write('<th>Vendedor</th>')
         printWindow.document.write('<th>Detalles del cliente</th>')
@@ -206,6 +207,7 @@ export const OrdersScreen = () => {
             const user = users.find((user) => user._id === sale.user)
 
             printWindow.document.write('<tr>')
+            printWindow.document.write(`<td>$${sale.number}</td>`)
             printWindow.document.write(`<td>${formatDate(sale.date)}</td>`)
             printWindow.document.write(`<td>${user ? `${user.firstName} ${user.lastName}` : ''}</td>`)
             printWindow.document.write(`<td>Nombre: ${client ? `${client.lastName}, ${client.firstName}` : ''}<br>Dirección: ${client ? `${client.address}` : ''}<br>Teléfono: ${client ? `${client.phone}` : ''}</td>`)
@@ -229,6 +231,7 @@ export const OrdersScreen = () => {
         img.src = logoNavbar;
         img.onload = function () {
             printWindow.document.write('<div style="text-align: center; margin-bottom: 20px;">');
+            printWindow.document.write(`<p style="text-align: right"><b>${(sale.number)}</b></p>`);
             printWindow.document.write(`<img src="${logoNavbar}" alt="Logo" style="width: 600px;">`);
             printWindow.document.write('</div>');
             printWindow.document.write(`<h3 style="text-align: center; color: #5f3c23; margin-top: 20px;"><b><i>Tel: 3815932845</i></b></h3>`);
@@ -277,7 +280,7 @@ export const OrdersScreen = () => {
             printWindow.close();
         }
     }
-    
+
     return (
         <>
             <div className='text-center p-5'>
@@ -326,6 +329,7 @@ export const OrdersScreen = () => {
                     <Table striped bordered hover>
                         <thead>
                             <tr>
+                                <th className='homeText text-center align-middle saleTitle'>Número</th>
                                 <th className='homeText text-center align-middle saleTitle'>Fecha</th>
                                 <th className='homeText text-center align-middle saleTitle'>Vendedor</th>
                                 <th className='homeText text-center align-middle saleTitle'>Detalles del cliente</th>
@@ -347,6 +351,7 @@ export const OrdersScreen = () => {
                                 let total = 0;
                                 return (
                                     <tr key={sale._id}>
+                                        <td className="text-center align-middle">{sale.number}</td>
                                         <td className="text-center align-middle">{formatDate(sale.date)}</td>
                                         <td className="text-center align-middle">
                                             {user ? `${user.lastName}, ${user.firstName}` : ''}
@@ -377,7 +382,7 @@ export const OrdersScreen = () => {
 
                                             <Button className='m-1 editButton' variant="" onClick={() => handleShowFinishOrderModal(sale)}>
                                                 <span className="d-flex align-items-center justify-content-center">
-                                                    <FaCheckCircle/>
+                                                    <FaCheckCircle />
                                                 </span>
                                             </Button>
                                             <Button className='m-1' variant="secondary" onClick={() => handleShowEditOrderModal(sale)}>
@@ -404,7 +409,7 @@ export const OrdersScreen = () => {
                 </div>
             </div>
             <AddOrder show={showAddOrderModal} onHide={handleCloseAddOrderModal} fetchSales={fetchSales} />
-            <DeleteOrder show={showDeleteSaleModal} onHide={handleCloseDeleteSaleModal} fetchSales={fetchSales} selectedSale={selectedSale} />
+            <DeleteOrder show={showDeleteSaleModal} onHide={handleCloseDeleteSaleModal} fetchSales={fetchSales} selectedSale={selectedSale} products={products}/>
             <EditOrder show={showEditOrderModal} onHide={handleCloseEditOrderModal} fetchSales={fetchSales} selectedSale={selectedSale} />
             <FinishOrder show={showFinishOrderModal} onHide={handleCloseFinishOrderModal} fetchSales={fetchSales} selectedSale={selectedSale} />
         </>

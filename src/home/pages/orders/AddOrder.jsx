@@ -23,6 +23,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
   const [subtotals, setSubtotals] = useState([0])
   const [total, setTotal] = useState(0)
   const [productFieldsData, setProductFieldsData] = useState({})
+  const [highestSaleNumber, setHighestSaleNumber] = useState(0);
 
   // MANEJO LA FECHA
   const getCurrentDateInArgentina = () => {
@@ -71,8 +72,30 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
     }
   }, [store.tokenValid, store.token])
 
-
-
+  useEffect(() => {
+    if (store.tokenValid) {
+      axios.get('/sales', {
+        headers: {
+          "access-token": store.token
+        }
+      })
+        .then((response) => {
+          // Extract the sale numbers from the sales data
+          const saleNumbers = response.data.map(sale => sale.number);
+  
+          // Find the maximum sale number
+          const maxSaleNumber = Math.max(...saleNumbers, 0);
+  
+          // Validate and set the highestSaleNumber
+          const maxSaleNumberValidado = isNaN(maxSaleNumber) ? 0 : maxSaleNumber;
+          setHighestSaleNumber(maxSaleNumberValidado);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [store.tokenValid, store.token]);
+  
   //CERRAR EL MODAL CON CANCELAR O X
   const handleOnHideModal = () => {
     reset()
@@ -187,6 +210,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
       });
   
       const saleToCreate = {
+        number: highestSaleNumber + 1,
         date: data.date,
         user: userId,
         client: data.client,
@@ -194,7 +218,7 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
         products: productsData,
         status: 'pending'
       };
-  
+  console.log(saleToCreate)
       const response = await axios.post('/sales/', saleToCreate, {
         headers: {
           "access-token": store.token,
