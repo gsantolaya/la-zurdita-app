@@ -184,15 +184,15 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                                 <Form.Control type="text" name="provider" placeholder="Ingrese el proveedor"
                                     {...register("provider", {
                                         required: true,
-                                        pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
+                                        // pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
                                     })}
                                 />
                                 {errors.provider && errors.provider.type === "required" && (
                                     <span className="validateSpan">Este campo es requerido.</span>
                                 )}
-                                {errors.provider && errors.provider.type === "pattern" && (
+                                {/* {errors.provider && errors.provider.type === "pattern" && (
                                     <span className="validateSpan">Nombre inválido. Solo se permiten letras y espacios.</span>
-                                )}
+                                )} */}
                             </Form.Group>
                         </div>
                         <div className='col-12 row my-2'>
@@ -300,6 +300,7 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                             <Form.Select as="select" name="wayToPay" {...register("wayToPay", { required: true })}>
                                 <option value="">Seleccione una opción</option>
                                 <option value="efectivo">Efectivo</option>
+                                <option value="efectivo">Débito</option>
                                 <option value="transferencia">MercadoPago</option>
                                 <option value="transferencia">Transferencia</option>
                             </Form.Select>
