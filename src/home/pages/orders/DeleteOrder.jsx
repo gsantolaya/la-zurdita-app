@@ -7,7 +7,6 @@ import ToastContainer from 'react-bootstrap/ToastContainer'
 import { TokenStorage } from "../../../utils/TokenStorage"
 
 export const DeleteOrder = ({ show, onHide, fetchSales, selectedSale, products }) => {
-
     const [showConfirmationToast, setShowConfirmationToast] = useState(false)
     const [showErrorToast, setShowErrorToast] = useState(false)
     const store = TokenStorage()
