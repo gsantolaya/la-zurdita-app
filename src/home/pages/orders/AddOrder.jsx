@@ -218,7 +218,6 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
         products: productsData,
         status: 'pending'
       };
-  console.log(saleToCreate)
       const response = await axios.post('/sales/', saleToCreate, {
         headers: {
           "access-token": store.token,
