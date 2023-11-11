@@ -148,7 +148,6 @@ export const SalesScreen = () => {
     }
 
     //FUNCION PARA FILTRAR LAS VENTAS
-    //FUNCION PARA FILTRAR LAS VENTAS
     const filteredSales = sales.filter((sale) => {
         const saleDate = sale.date.toLowerCase()
         const saleStatus = sale.status === 'completed'
@@ -196,32 +195,45 @@ export const SalesScreen = () => {
         }
     }
 
-
-
     //CALCULANDO TOTALES:
     // Función para calcular la cantidad de ventas por tipo de pago
+    // Función para calcular la cantidad de ventas por tipo de pago
     function calculateCountByWayToPay(wayToPay) {
-        const count = filteredSales.filter(sale => sale.wayToPay === wayToPay).length
-        return count === 0 ? 0 : count
+        const count = filteredSales.filter(sale => sale.payments.some(payment => payment.wayToPay === wayToPay)).length;
+        return count === 0 ? 0 : count;
     }
+
     // Función para calcular la suma de los valores de sale.payment por tipo de pago
     function calculateSubtotalByWayToPay(wayToPay) {
         const subtotal = filteredSales
-            .filter(sale => sale.wayToPay === wayToPay)
-            .reduce((total, sale) => total + sale.payment, 0)
-        return subtotal === 0 ? 0 : subtotal
+            .filter(sale => sale.payments.some(payment => payment.wayToPay === wayToPay))
+            .reduce((total, sale) => {
+                const payments = sale.payments.filter(payment => payment.wayToPay === wayToPay);
+                return total + payments.reduce((paymentTotal, payment) => paymentTotal + payment.payment, 0);
+            }, 0);
+        return subtotal === 0 ? 0 : subtotal;
     }
+
     // Función para calcular el total de todos los valores sale.payment
     function calculateSubtotal() {
-        return filteredSales.reduce((total, sale) => total + sale.payment, 0)
+        return filteredSales.reduce((total, sale) => {
+            return total + sale.payments.reduce((paymentTotal, payment) => paymentTotal + payment.payment, 0);
+        }, 0);
     }
 
-    // Función para calcular la suma total de propinas
-    function calculateTotalTips() {
-        const totalTips = filteredSales.reduce((total, sale) => total + (sale.tip || 0), 0)
-        return totalTips
-    }
+    // Función para calcular el total de propinas
+    // function calculateTotalTips() {
+    //     return filteredSales.reduce((total, sale) => {
+    //         return total + sale.payments.reduce((tipTotal, payment) => tipTotal + (payment.tip || 0), 0);
+    //     }, 0);
+    // }
 
+    // // Función para calcular la cantidad total de propinas
+    // function calculateTotalTipCount() {
+    //     return filteredSales.reduce((total, sale) => {
+    //         return total + (sale.payments.some(payment => payment.tip !== undefined) ? 1 : 0);
+    //     }, 0);
+    // }
 
     //FILTRAR POR FECHAS 
     useEffect(() => {
@@ -267,11 +279,9 @@ export const SalesScreen = () => {
                         <th class="homeText saleTitle">Cliente</th>
                         <th class="homeText saleTitle">Detalle de la venta</th>
                         <th class="homeText saleTitle">Total</th>
-                        <th class="homeText saleTitle">Forma de pago</th>
-                        <th class="homeText saleTitle">Pago</th>
+                        <th class="homeText saleTitle">Pagos</th>
                         <th class="homeText saleTitle">Saldo</th>
                         <th class="homeText saleTitle">Estado</th>
-                        <th class="homeText saleTitle">Propina</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -298,16 +308,22 @@ export const SalesScreen = () => {
                                                 ${index < sale.products.length - 1 ? '<hr />' : ''}
                                             </div>
                                         `;
-                                    })}
+                                    }).join('')}
                                 </td>
                                 <td class="homeText"><b>$${total}</b></td>
-                                <td class="homeText">${sale.wayToPay}</td>
-                                <td class="homeText">$${sale.payment}</td>
-                                <td class="homeText">$${total - sale.payment}</td>
+                                <td class="homeText">${sale.payments.map((payment, paymentIndex) => (
+                                    `<div key=${paymentIndex}>
+                                        <div><b>Fecha:</b> ${formatTableDate(formatDate(payment.date))}</div>
+                                        <div><b>Pago:</b> $${payment.payment}</div>
+                                        <div><b>Forma de pago:</b> ${payment.wayToPay}</div>
+                                        <div><b>Propina:</b> $${payment.tip || 0}</div>
+                                        ${paymentIndex < sale.payments.length - 1 ? '<hr />' : ''}
+                                    </div>`
+                                )).join('')}</td>
+                                <td class="homeText">$${total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0)}</td>
                                 <td class="homeText ${total - sale.payment > 0 ? 'red-text' : (total - sale.payment === 0 ? 'green-text' : 'blue-text')}">
                                     ${total - sale.payment > 0 ? 'Saldo pendiente' : (total - sale.payment === 0 ? 'Saldado' : 'Saldo a favor')}
                                 </td>
-                                <td class="homeText">$${sale.tip || 0}</td>
                             </tr>
                         `;
                     }).join('')}
@@ -325,7 +341,6 @@ export const SalesScreen = () => {
         printWindow.close();
     }
     
-
 
     //FUNCION PARA IMPRIMIR EL RESUMEN
     const handlePrintSummary = () => {
@@ -409,22 +424,36 @@ export const SalesScreen = () => {
         printWindow.close()
     }
 
-
     // OBTENER EL TOTAL DE EMPANADAS VENDIDAS HORNEADAS O CONGELADAS
-    const horneadasSales = filteredSales.filter(sale => sale.productStatus === 'horneadas')
-    const congeladasSales = filteredSales.filter(sale => sale.productStatus === 'congeladas')
+    const horneadasSales = filteredSales.filter(sale => sale.products.some(product => product.productStatus === 'horneadas'));
+    const congeladasSales = filteredSales.filter(sale => sale.products.some(product => product.productStatus === 'congeladas'));
+
     const cantidadHorneadas = horneadasSales.reduce((total, sale) => {
-        if (sale.amountDescription === 'docena') {
-            return total + sale.amount * 12
-        }
-        return total + sale.amount
-    }, 0)
+        const productAmount = sale.products.reduce((acc, product) => {
+            if (product.productStatus === 'horneadas') {
+                if (product.amountDescription === 'docena') {
+                    return acc + product.amount * 12;
+                }
+                return acc + product.amount;
+            }
+            return acc;
+        }, 0);
+        return total + productAmount;
+    }, 0);
+
     const cantidadCongeladas = congeladasSales.reduce((total, sale) => {
-        if (sale.amountDescription === 'docena') {
-            return total + sale.amount * 12
-        }
-        return total + sale.amount
-    }, 0)
+        const productAmount = sale.products.reduce((acc, product) => {
+            if (product.productStatus === 'congeladas') {
+                if (product.amountDescription === 'docena') {
+                    return acc + product.amount * 12;
+                }
+                return acc + product.amount;
+            }
+            return acc;
+        }, 0);
+        return total + productAmount;
+    }, 0);
+
 
     // OBTENER EL TOTAL DE EMPANADAS VENDIDAS POR VARIEDAD
     const allProductVarieties = products.map(product => product.type)
@@ -445,6 +474,41 @@ export const SalesScreen = () => {
 
         productsSoldByVariety[variety] = totalSoldForVariety
     })
+
+    //PROPINAS
+    function calculateTotalTips() {
+        let totalTips = 0;
+
+        // Itera sobre cada venta
+        filteredSales.forEach(sale => {
+            // Itera sobre los pagos de cada venta
+            sale.payments.forEach(payment => {
+                // Suma la propina si está presente y no es nula
+                if (payment.tip !== null && payment.tip !== undefined) {
+                    totalTips += payment.tip;
+                }
+            });
+        });
+
+        return totalTips;
+    }
+
+    function calculateTotalTipCount() {
+        let totalTipCount = 0;
+
+        // Itera sobre cada venta
+        filteredSales.forEach(sale => {
+            // Itera sobre los pagos de cada venta
+            sale.payments.forEach(payment => {
+                // Incrementa el contador si la propina está presente y no es nula
+                if (payment.tip !== null && payment.tip !== undefined) {
+                    totalTipCount += 1;
+                }
+            });
+        });
+
+        return totalTipCount;
+    }
 
     return (
         <>
@@ -519,11 +583,12 @@ export const SalesScreen = () => {
                                 <th className='homeText text-center align-middle saleTitle'>Cliente</th>
                                 <th className='homeText text-center align-middle saleTitle'>Detalle de la venta</th>
                                 <th className='homeText text-center align-middle saleTitle'>Total</th>
-                                <th className='homeText text-center align-middle saleTitle'>Forma de pago</th>
+                                <th className='homeText text-center align-middle saleTitle'>Pagos</th>
+                                {/* <th className='homeText text-center align-middle saleTitle'>Forma de pago</th>
                                 <th className='homeText text-center align-middle saleTitle'>Pago</th>
+                                <th className='homeText text-center align-middle saleTitle'>Propina</th> */}
                                 <th className='homeText text-center align-middle saleTitle'>Saldo</th>
                                 <th className='homeText text-center align-middle saleTitle'>Estado</th>
-                                <th className='homeText text-center align-middle saleTitle'>Propina</th>
                                 <th>
                                     <Button className='m-1' variant="dark" onClick={handlePrintTable}>
                                         <span className="d-flex align-items-center justify-content-center">
@@ -564,13 +629,21 @@ export const SalesScreen = () => {
                                             })}
                                         </td>
                                         <td className="text-center align-middle"><b>${total}</b></td>
-                                        <td className="text-center align-middle">{sale.wayToPay}</td>
-                                        <td className="text-center align-middle">${sale.payment}</td>
-                                        <td className="text-center align-middle">${total - sale.payment}</td>
+                                        <td className="text-center align-middle">{sale.payments.map((payment, paymentIndex) => (
+                                            <div key={paymentIndex}>
+                                                <div><b>Fecha:</b> {formatTableDate(formatDate(payment.date))}</div>
+                                                <div><b>Pago:</b> ${payment.payment}</div>
+                                                <div><b>Forma de pago:</b> {payment.wayToPay}</div>
+                                                <div><b>Propina:</b> ${payment.tip || 0}</div>
+                                                {paymentIndex < sale.payments.length - 1 && <hr />}
+                                            </div>
+                                        ))}</td>
+                                        {/* <td className="text-center align-middle">${sale.payment}</td> */}
+                                        {/* <td className="text-center align-middle">${sale.tip || 0}</td> */}
+                                        <td className="text-center align-middle">${total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0)}</td>
                                         <td className={`text-center align-middle ${total - sale.payment > 0 ? 'red-text' : (total - sale.payment === 0 ? 'green-text' : 'blue-text')}`}>
                                             {total - sale.payment > 0 ? 'Saldo pendiente' : (total - sale.payment === 0 ? 'Saldado' : 'Saldo a favor')}
                                         </td>
-                                        <td className="text-center align-middle">${sale.tip || 0}</td>
                                         <td className="text-center align-middle">
                                             <td className="text-center align-middle">
                                                 <Button className='m-1 editButton' onClick={() => handleShowEditSaleModal(sale)} variant="">
@@ -629,7 +702,7 @@ export const SalesScreen = () => {
                             </tr>
                             <tr>
                                 <td>Propinas</td>
-                                <td>{filteredSales.filter(sale => sale.tip !== null && sale.tip !== 0).length || 0}</td>
+                                <td>{calculateTotalTipCount()}</td>
                                 <td>${calculateTotalTips()}</td>
                             </tr>
                             <tr>
