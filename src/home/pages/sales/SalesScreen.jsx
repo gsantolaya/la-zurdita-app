@@ -600,9 +600,6 @@ export const SalesScreen = () => {
                                 <th className='homeText text-center align-middle saleTitle'>Detalle de la venta</th>
                                 <th className='homeText text-center align-middle saleTitle'>Total</th>
                                 <th className='homeText text-center align-middle saleTitle'>Pagos</th>
-                                {/* <th className='homeText text-center align-middle saleTitle'>Forma de pago</th>
-                                <th className='homeText text-center align-middle saleTitle'>Pago</th>
-                                <th className='homeText text-center align-middle saleTitle'>Propina</th> */}
                                 <th className='homeText text-center align-middle saleTitle'>Saldo</th>
                                 <th className='homeText text-center align-middle saleTitle'>Estado</th>
                                 <th>
@@ -654,11 +651,10 @@ export const SalesScreen = () => {
                                                 {paymentIndex < sale.payments.length - 1 && <hr />}
                                             </div>
                                         ))}</td>
-                                        {/* <td className="text-center align-middle">${sale.payment}</td> */}
-                                        {/* <td className="text-center align-middle">${sale.tip || 0}</td> */}
+
                                         <td className="text-center align-middle">${total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0)}</td>
-                                        <td className={`text-center align-middle ${total - sale.payment > 0 ? 'red-text' : (total - sale.payment === 0 ? 'green-text' : 'blue-text')}`}>
-                                            {total - sale.payment > 0 ? 'Saldo pendiente' : (total - sale.payment === 0 ? 'Saldado' : 'Saldo a favor')}
+                                        <td className={`text-center align-middle ${total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) > 0 ? 'red-text' : (total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) === 0 ? 'green-text' : 'blue-text')}`}>
+                                            {total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) > 0 ? 'Saldo pendiente' : (total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) === 0 ? 'Saldado' : 'Saldo a favor')}
                                         </td>
                                         <td className="text-center align-middle">
                                             <td className="text-center align-middle">
