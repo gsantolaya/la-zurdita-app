@@ -17,7 +17,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
     const store = TokenStorage()
     const [currentDate, setCurrentDate] = useState('')
     const [additionalPayFields, setAdditionalPayFields] = useState([])
-    const [payFieldsData, setPayFieldsData] = useState({})
+    // const [payFieldsData, setPayFieldsData] = useState({})
 
     const [nextId, setNextId] = useState(1)
 
@@ -38,10 +38,10 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
         setAdditionalPayFields([...additionalPayFields, { id: newId, type: "unidad" }])
 
         // Crea un objeto vacío para los valores del nuevo campo
-        setPayFieldsData(prevData => ({
-            ...prevData,
-            [newId]: {},
-        }))
+        // setPayFieldsData(prevData => ({
+        //     ...prevData,
+        //     [newId]: {},
+        // }))
         setNextId(newId + 1)
     }
 
@@ -50,11 +50,11 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
         setAdditionalPayFields(updatedFields)
 
         // Eliminar los valores correspondientes al campo eliminado en el objeto de datos de producto
-        setPayFieldsData((prevData) => {
-            const updatedData = { ...prevData }
-            delete updatedData[id]
-            return updatedData
-        })
+        // setPayFieldsData((prevData) => {
+        //     const updatedData = { ...prevData }
+        //     delete updatedData[id]
+        //     return updatedData
+        // })
     }
 
     // MANEJO LA FECHA
