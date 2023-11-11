@@ -268,7 +268,7 @@ export const SalesScreen = () => {
     //FUNCION PARA IMPRIMIR LA TABLA
     const handlePrintTable = () => {
         const printWindow = window.open('', '', 'width=800,height=600')
-    
+
         // Crear el contenido de la tabla que deseas imprimir
         const tableContent = `
             <table border="1" style="width: 100%; text-align: center;">
@@ -286,21 +286,21 @@ export const SalesScreen = () => {
                 </thead>
                 <tbody>
                     ${filteredSales.slice().sort(compareSales).map((sale) => {
-                        const client = clients.find((client) => client._id === sale.client);
-                        const user = users.find((user) => user._id === sale.user);
-                        let total = 0;
-                        return `
+            const client = clients.find((client) => client._id === sale.client);
+            const user = users.find((user) => user._id === sale.user);
+            let total = 0;
+            return `
                             <tr>
                                 <td class="homeText">${formatTableDate(formatDate(sale.date))}</td>
                                 <td class="homeText">${user ? `${user.lastName}, ${user.firstName}` : ''}</td>
                                 <td class="homeText">${client ? `${client.lastName}, ${client.firstName}` : ''}</td>
                                 <td class="homeText" style="text-align: left;">
                                     ${sale.products.map((product, index) => {
-                                        const productItem = products.find((p) => p._id === product.product);
-                                        let subtotal = product.unitPrice * product.amount;
-                                        total += subtotal;
-    
-                                        return `
+                const productItem = products.find((p) => p._id === product.product);
+                let subtotal = product.unitPrice * product.amount;
+                total += subtotal;
+
+                return `
                                             <div>
                                                 <div><b>Variedad:</b> ${productItem ? productItem.type : ''} <b>Estado:</b> ${product.productStatus}</div>
                                                 <div><b>Cantidad:</b> ${product.amount} x ${product.amountDescription}</div>
@@ -308,39 +308,39 @@ export const SalesScreen = () => {
                                                 ${index < sale.products.length - 1 ? '<hr />' : ''}
                                             </div>
                                         `;
-                                    }).join('')}
+            }).join('')}
                                 </td>
                                 <td class="homeText"><b>$${total}</b></td>
                                 <td class="homeText">${sale.payments.map((payment, paymentIndex) => (
-                                    `<div key=${paymentIndex}>
+                `<div key=${paymentIndex}>
                                         <div><b>Fecha:</b> ${formatTableDate(formatDate(payment.date))}</div>
                                         <div><b>Pago:</b> $${payment.payment}</div>
                                         <div><b>Forma de pago:</b> ${payment.wayToPay}</div>
                                         <div><b>Propina:</b> $${payment.tip || 0}</div>
                                         ${paymentIndex < sale.payments.length - 1 ? '<hr />' : ''}
                                     </div>`
-                                )).join('')}</td>
+            )).join('')}</td>
                                 <td class="homeText">$${total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0)}</td>
                                 <td class="homeText ${total - sale.payment > 0 ? 'red-text' : (total - sale.payment === 0 ? 'green-text' : 'blue-text')}">
                                     ${total - sale.payment > 0 ? 'Saldo pendiente' : (total - sale.payment === 0 ? 'Saldado' : 'Saldo a favor')}
                                 </td>
                             </tr>
                         `;
-                    }).join('')}
+        }).join('')}
                 </tbody>
             </table>
         `;
-    
+
         // Agregar el contenido de la tabla al documento de la ventana emergente
         printWindow.document.write(tableContent);
-    
+
         // Cerrar la estructura HTML y mostrar la ventana emergente para imprimir
         printWindow.document.write('</body></html>');
         printWindow.document.close();
         printWindow.print();
         printWindow.close();
     }
-    
+
 
     //FUNCION PARA IMPRIMIR EL RESUMEN
     const handlePrintSummary = () => {
@@ -407,21 +407,24 @@ export const SalesScreen = () => {
         printWindow.document.write('<h2>Resumen de Ventas por Variedad de Empanadas</h2>')
         printWindow.document.write('<table border="1">')
         printWindow.document.write('<thead><tr>')
-        printWindow.document.write('<th>Variedad de Empanadas</th>')
-        printWindow.document.write('<th>Vendidas x unidad</th>')
+        printWindow.document.write('<th className="homeText text-center align-middle saleTitle">Variedad de Empanadas</th>')
+        printWindow.document.write('<th className="homeText text-center align-middle saleTitle">Vendidas x unidad</th>')
         printWindow.document.write('</tr></thead><tbody>')
-        uniqueProductVarieties.forEach(variety => {
+        
+        Object.entries(empanadasByVariety).forEach(([variety, quantity]) => {
             printWindow.document.write('<tr>')
-            printWindow.document.write(`<td>${variety}</td>`)
-            printWindow.document.write(`<td>${productsSoldByVariety[variety]}</td>`)
+            printWindow.document.write(`<td className="homeText text-center align-middle">${variety}</td>`)
+            printWindow.document.write(`<td className="homeText text-center align-middle">${quantity}</td>`)
             printWindow.document.write('</tr>')
         })
+        
         printWindow.document.write('</tbody></table>')
-
+        
         printWindow.document.write('</body></html>')
         printWindow.document.close()
         printWindow.print()
         printWindow.close()
+        
     }
 
     // OBTENER EL TOTAL DE EMPANADAS VENDIDAS HORNEADAS O CONGELADAS
@@ -456,24 +459,37 @@ export const SalesScreen = () => {
 
 
     // OBTENER EL TOTAL DE EMPANADAS VENDIDAS POR VARIEDAD
-    const allProductVarieties = products.map(product => product.type)
-    const uniqueProductVarieties = [...new Set(allProductVarieties)]
-    const productsSoldByVariety = {}
-    uniqueProductVarieties.forEach(variety => {
-        const salesForVariety = filteredSales.filter(sale => {
-            const product = products.find(p => p._id === sale.product)
-            return product && product.type === variety
-        })
+    // Función para obtener el total de empanadas vendidas por variedad
+    function calculateTotalEmpanadasByVariety() {
+        // Objeto para almacenar la cantidad de empanadas vendidas por cada variedad
+        const empanadasByVariety = {};
 
-        const totalSoldForVariety = salesForVariety.reduce((total, sale) => {
-            if (sale.amountDescription === 'docena') {
-                return total + sale.amount * 12
-            }
-            return total + sale.amount
-        }, 0)
+        // Obtén todas las variedades existentes
+        const allVarieties = products.map(product => product.type);
 
-        productsSoldByVariety[variety] = totalSoldForVariety
-    })
+        // Inicializa la cantidad de empanadas vendidas por variedad en 0
+        allVarieties.forEach(variety => {
+            empanadasByVariety[variety] = 0;
+        });
+
+        // Itera sobre cada venta
+        filteredSales.forEach((sale) => {
+            // Itera sobre los productos de cada venta
+            sale.products.forEach((product) => {
+                const productItem = products.find((p) => p._id === product.product);
+                const variety = productItem ? productItem.type : '';
+
+                // Suma la cantidad de empanadas vendidas por variedad
+                if (variety) {
+                    const amountMultiplier = product.amountDescription === 'docena' ? 12 : 1;
+                    empanadasByVariety[variety] += product.amount * amountMultiplier;
+                }
+            });
+        });
+
+        return empanadasByVariety;
+    }
+    const empanadasByVariety = calculateTotalEmpanadasByVariety();
 
     //PROPINAS
     function calculateTotalTips() {
@@ -584,9 +600,6 @@ export const SalesScreen = () => {
                                 <th className='homeText text-center align-middle saleTitle'>Detalle de la venta</th>
                                 <th className='homeText text-center align-middle saleTitle'>Total</th>
                                 <th className='homeText text-center align-middle saleTitle'>Pagos</th>
-                                {/* <th className='homeText text-center align-middle saleTitle'>Forma de pago</th>
-                                <th className='homeText text-center align-middle saleTitle'>Pago</th>
-                                <th className='homeText text-center align-middle saleTitle'>Propina</th> */}
                                 <th className='homeText text-center align-middle saleTitle'>Saldo</th>
                                 <th className='homeText text-center align-middle saleTitle'>Estado</th>
                                 <th>
@@ -638,11 +651,10 @@ export const SalesScreen = () => {
                                                 {paymentIndex < sale.payments.length - 1 && <hr />}
                                             </div>
                                         ))}</td>
-                                        {/* <td className="text-center align-middle">${sale.payment}</td> */}
-                                        {/* <td className="text-center align-middle">${sale.tip || 0}</td> */}
+
                                         <td className="text-center align-middle">${total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0)}</td>
-                                        <td className={`text-center align-middle ${total - sale.payment > 0 ? 'red-text' : (total - sale.payment === 0 ? 'green-text' : 'blue-text')}`}>
-                                            {total - sale.payment > 0 ? 'Saldo pendiente' : (total - sale.payment === 0 ? 'Saldado' : 'Saldo a favor')}
+                                        <td className={`text-center align-middle ${total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) > 0 ? 'red-text' : (total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) === 0 ? 'green-text' : 'blue-text')}`}>
+                                            {total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) > 0 ? 'Saldo pendiente' : (total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) === 0 ? 'Saldado' : 'Saldo a favor')}
                                         </td>
                                         <td className="text-center align-middle">
                                             <td className="text-center align-middle">
@@ -737,10 +749,10 @@ export const SalesScreen = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {uniqueProductVarieties.map(variety => (
+                            {Object.entries(empanadasByVariety).map(([variety, quantity]) => (
                                 <tr key={variety}>
                                     <td>{variety}</td>
-                                    <td>{productsSoldByVariety[variety]}</td>
+                                    <td>{quantity}</td>
                                 </tr>
                             ))}
                         </tbody>
