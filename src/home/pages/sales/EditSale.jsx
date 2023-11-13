@@ -343,7 +343,7 @@ export const EditSale = ({ show, onHide, fetchSales, selectedSale }) => {
         client: data.client,
         type: data.type,
         products: productsData,
-        status: 'pending'
+        status: 'completed'
       };
 
       const response = await axios.put(`/sales/${selectedSale._id}`, saleEdited, {
