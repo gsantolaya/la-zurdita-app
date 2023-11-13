@@ -9,13 +9,13 @@ import Form from 'react-bootstrap/Form'
 import { TokenStorage } from "../../../utils/TokenStorage"
 import { FaTrashAlt } from 'react-icons/fa'
 
-export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
+export const AddPayment = ({ show, onHide, fetchSales, selectedSale }) => {
 
-    const [currentDate, setCurrentDate] = useState('')
-    const { handleSubmit, register, reset, formState: { errors } } = useForm()
     const [showEditSaleConfirmationToast, setShowEditSaleConfirmationToast] = useState(false)
     const [showEditSaleErrorToast, setShowEditSaleErrorToast] = useState(false)
+    const { handleSubmit, register, reset, formState: { errors } } = useForm()
     const store = TokenStorage()
+    const [currentDate, setCurrentDate] = useState('')
     const [additionalPayFields, setAdditionalPayFields] = useState([])
     const [payFieldsData, setPayFieldsData] = useState({})
 
@@ -37,26 +37,26 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
 
     const handleAddPayField = () => {
         const newId = nextId
-        setAdditionalPayFields([...additionalPayFields, { id: newId, type: "unidad" }]);
+        setAdditionalPayFields([...additionalPayFields, { id: newId, type: "unidad" }])
 
         // Crea un objeto vacío para los valores del nuevo campo
-        setPayFieldsData(prevData => ({
-            ...prevData,
-            [newId]: {},
-        }))
+        // setPayFieldsData(prevData => ({
+        //     ...prevData,
+        //     [newId]: {},
+        // }))
         setNextId(newId + 1)
     }
 
     const handleRemovePayField = (id) => {
-        const updatedFields = additionalPayFields.filter((field) => field.id !== id);
+        const updatedFields = additionalPayFields.filter((field) => field.id !== id)
         setAdditionalPayFields(updatedFields)
 
         // Eliminar los valores correspondientes al campo eliminado en el objeto de datos de producto
-        setPayFieldsData((prevData) => {
-            const updatedData = { ...prevData }
-            delete updatedData[id]
-            return updatedData
-        })
+        // setPayFieldsData((prevData) => {
+        //     const updatedData = { ...prevData }
+        //     delete updatedData[id]
+        //     return updatedData
+        // })
     }
 
     // MANEJO LA FECHA
@@ -70,18 +70,23 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
         getCurrentDateInArgentina()
     }, []);
 
-    // FUNCION PARA FINALIZAR UN PEDIDO
+    // FUNCION PARA MODIFICAR UN PRODUCTO
     const handleFinishOrderFormSubmit = async (formData) => {
         try {
             // Update the sale
             const paymentsData = additionalPayFields.map((field) => {
+                const date = formData[`date${field.id}`];
+                const wayToPay = formData[`wayToPay${field.id}`];
+                const payment = formData[`payment${field.id}`];
+                const tip = formData[`tip${field.id}`];
                 return {
-                    date: formData[`date${field.id}`],
-                    wayToPay: formData[`wayToPay${field.id}`],
-                    payment: formData[`payment${field.id}`],
-                    tip: formData[`tip${field.id}`],
+                    date: date,
+                    wayToPay,
+                    payment,
+                    tip
                 };
             });
+
 
             const clientId = selectedSale.client
 
@@ -104,16 +109,36 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                 return total + totalProducto;
             }, 0);
 
-            const totalPayment = paymentsData.reduce((total, payment) => total + parseFloat(payment.payment), 0);
-
+            const totalPreviousPayments = selectedSale.payments.reduce((total, payment) => total + parseFloat(payment.payment), 0);
+            console.log(totalPreviousPayments)
+            const totalPayment = paymentsData.reduce((total, payment) => total + parseFloat(payment.payment), 0) + totalPreviousPayments;
+            console.log(totalPayment)
             const newBalance = previousBalance + (totalProductos - totalPayment);
+            console.log(previousBalance)
+            console.log(newBalance)
+
+            const newPayments = additionalPayFields.map((field) => {
+                const date = formData[`date${field.id}`];
+                const wayToPay = formData[`wayToPay${field.id}`];
+                const payment = formData[`payment${field.id}`];
+                const tip = formData[`tip${field.id}`];
+                return {
+                    date: date,
+                    wayToPay,
+                    payment,
+                    tip
+                };
+            });
+
+            const updatedPayments = [...selectedSale.payments, ...newPayments];
+
 
             const updatedSale = {
                 user: selectedSale.user,
                 date: selectedSale.date,
                 client: selectedSale.client,
                 products: selectedSale.products,
-                payments: paymentsData,
+                payments: updatedPayments, // Utilizar el nuevo arreglo de pagos
                 status: "completed"
             }
 
@@ -181,7 +206,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                                     </Form.Group>
                                     <Form.Group className="formFields m-2 col-3" controlId="formBasicWayToPay">
                                         <Form.Label className='modalLabel'>Forma de pago:</Form.Label>
-                                        <Form.Select as="select" name={`wayToPay${field.id}`} {...register(`wayToPay${field.id}`, { required: true })}>
+                                        <Form.Select as="select" name="wayToPay" {...register(`wayToPay${field.id}`, { required: true })}>
                                             <option value="">Selecciona una categoría</option>
                                             <option value="efectivo">Efectivo</option>
                                             <option value="mercadoPago">Mercado pago</option>
@@ -193,7 +218,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                                     </Form.Group>
                                     <Form.Group className="formFields m-2 col-10 col-md-2" controlId="formBasicPayment">
                                         <Form.Label className='modalLabel'>Pagado:</Form.Label>
-                                        <Form.Control type="number" maxLength={20} name={`payment${field.id}`} placeholder="0000"
+                                        <Form.Control type="number" maxLength={20} name="payment" placeholder="0000"
                                             {...register(`payment${field.id}`, {
                                                 required: true,
                                                 pattern: /^\d+(\.\d{1,2})?$/
@@ -205,7 +230,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                                     </Form.Group>
                                     <Form.Group className="formFields m-2 col-10 col-md-2" controlId="formBasicPayment">
                                         <Form.Label className='modalLabel'>Propina:</Form.Label>
-                                        <Form.Control type="number" maxLength={20} name={`tip${field.id}`} placeholder="0000"
+                                        <Form.Control type="number" maxLength={20} name="tip" placeholder="0000"
                                             {...register(`tip${field.id}`, {
                                                 required: false,
                                                 pattern: /^\d+(\.\d{1,2})?$/
