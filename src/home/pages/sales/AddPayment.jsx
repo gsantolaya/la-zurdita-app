@@ -102,21 +102,17 @@ export const AddPayment = ({ show, onHide, fetchSales, selectedSale }) => {
             const previousBalance = clientData.balance;
 
             // Calculate the new balance
-            const totalProductos = selectedSale.products.reduce((total, product) => {
-                const unitPrice = product.unitPrice;
-                const amount = product.amount;
-                const totalProducto = unitPrice * amount;
-                return total + totalProducto;
-            }, 0);
+            // const totalProductos = selectedSale.products.reduce((total, product) => {
+            //     const unitPrice = product.unitPrice;
+            //     const amount = product.amount;
+            //     const totalProducto = unitPrice * amount;
+            //     return total + totalProducto;
+            // }, 0);
 
             const totalPreviousPayments = selectedSale.payments.reduce((total, payment) => total + parseFloat(payment.payment), 0);
-            console.log(totalPreviousPayments)
             const totalPayment = paymentsData.reduce((total, payment) => total + parseFloat(payment.payment), 0) + totalPreviousPayments;
-            console.log(totalPayment)
-            const newBalance = previousBalance + (totalProductos - totalPayment);
-            console.log(previousBalance)
-            console.log(newBalance)
-
+            const newBalance = totalPayment - previousBalance - totalPreviousPayments
+                                    
             const newPayments = additionalPayFields.map((field) => {
                 const date = formData[`date${field.id}`];
                 const wayToPay = formData[`wayToPay${field.id}`];
