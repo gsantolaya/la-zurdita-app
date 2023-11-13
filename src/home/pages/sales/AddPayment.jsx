@@ -68,7 +68,6 @@ export const AddPayment = ({ show, onHide, fetchSales, selectedSale }) => {
     }
     useEffect(() => {
         getCurrentDateInArgentina()
-        setAdditionalPayFields([{ id: 1, type: 'unidad' }]);
     }, []);
 
     // FUNCION PARA MODIFICAR UN PRODUCTO
