@@ -271,10 +271,6 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
       setShowErrorAddSaleToast(true);
     }
   }
-  
-  
-
-
 
   // MODIFICAR TIPO DE VENTA AL SELECCIONAR UN CLIENTE
   const handleClientChange = (event) => {
@@ -292,7 +288,6 @@ export const AddOrder = ({ show, onHide, fetchSales }) => {
     }
   }
 
-  
   //ESTABLECER EL PRECIO DEL PRODUCTO POR UNIDAD SI ES UNA VENTA MAYORISTA AL SELECCIONAR UNA VARIEDAD
   const typeValue = watch("type")
   const handleProductChange = (event, fieldId) => {

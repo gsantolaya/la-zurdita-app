@@ -1,6 +1,7 @@
 //IMPORTACIONES
 import React, { useEffect, useState } from 'react'
 import { FaEdit, FaTrashAlt } from "react-icons/fa"
+import { BsCash } from "react-icons/bs"
 import Table from 'react-bootstrap/Table'
 import axios from 'axios'
 import Button from 'react-bootstrap/Button'
@@ -13,6 +14,8 @@ import { useNavigate } from "react-router-dom"
 import InputGroup from "react-bootstrap/InputGroup"
 import { BsSearch, BsPrinterFill } from "react-icons/bs"
 import { AddSale } from './AddSale'
+import { AddPayment } from './AddPayment'
+
 import { DeleteSale } from './DeleteSale'
 import { EditSale } from './EditSale'
 import "./SalesScreen.css"
@@ -34,6 +37,8 @@ export const SalesScreen = () => {
     const handleCloseAddSaleModal = () => setShowAddSaleModal(false)
 
     const [showDeleteSaleModal, setShowDeleteSaleModal] = useState(false)
+
+    const [showAddPaymentModal, setShowAddPaymentModal] = useState(false)
 
     const [showEditSaleModal, setShowEditSaleModal] = useState(false)
     const [selectedSale, setSelectedSale] = useState(null)
@@ -134,6 +139,15 @@ export const SalesScreen = () => {
 
     const handleCloseEditSaleModal = () => {
         setShowEditSaleModal(false)
+    }
+
+    const handleShowAddPaymentModal = (sale) => {
+        setSelectedSale(sale)
+        setShowAddPaymentModal(true)
+    }
+
+    const handleCloseAddPaymentModal = () => {
+        setShowAddPaymentModal(false)
     }
 
     //MANEJO PARA BUSQUEDA Y FILTRO
@@ -410,21 +424,21 @@ export const SalesScreen = () => {
         printWindow.document.write('<th className="homeText text-center align-middle saleTitle">Variedad de Empanadas</th>')
         printWindow.document.write('<th className="homeText text-center align-middle saleTitle">Vendidas x unidad</th>')
         printWindow.document.write('</tr></thead><tbody>')
-        
+
         Object.entries(empanadasByVariety).forEach(([variety, quantity]) => {
             printWindow.document.write('<tr>')
             printWindow.document.write(`<td className="homeText text-center align-middle">${variety}</td>`)
             printWindow.document.write(`<td className="homeText text-center align-middle">${quantity}</td>`)
             printWindow.document.write('</tr>')
         })
-        
+
         printWindow.document.write('</tbody></table>')
-        
+
         printWindow.document.write('</body></html>')
         printWindow.document.close()
         printWindow.print()
         printWindow.close()
-        
+
     }
 
     // OBTENER EL TOTAL DE EMPANADAS VENDIDAS HORNEADAS O CONGELADAS
@@ -650,17 +664,22 @@ export const SalesScreen = () => {
                                                 <div><b>Propina:</b> ${payment.tip || 0}</div>
                                                 {paymentIndex < sale.payments.length - 1 && <hr />}
                                             </div>
-                                        ))}</td>
-
+                                        ))}
+                                        </td>
                                         <td className="text-center align-middle">${total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0)}</td>
                                         <td className={`text-center align-middle ${total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) > 0 ? 'red-text' : (total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) === 0 ? 'green-text' : 'blue-text')}`}>
                                             {total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) > 0 ? 'Saldo pendiente' : (total - sale.payments.reduce((acc, payment) => acc + payment.payment, 0) === 0 ? 'Saldado' : 'Saldo a favor')}
                                         </td>
                                         <td className="text-center align-middle">
                                             <td className="text-center align-middle">
-                                                <Button className='m-1 editButton' onClick={() => handleShowEditSaleModal(sale)} variant="">
+                                            <Button className='m-1 editButton' onClick={() => handleShowEditSaleModal(sale)} variant="">
                                                     <span className="d-flex align-items-center justify-content-center">
                                                         <FaEdit />
+                                                    </span>
+                                                </Button>
+                                                <Button className='m-1 ' onClick={() => handleShowAddPaymentModal(sale)} variant="success">
+                                                    <span className="d-flex align-items-center justify-content-center">
+                                                        <BsCash />
                                                     </span>
                                                 </Button>
                                                 <Button className='m-1' onClick={() => handleShowDeletSaleModal(sale)} variant="danger">
@@ -679,6 +698,7 @@ export const SalesScreen = () => {
                 <AddSale show={showAddSaleModal} onHide={handleCloseAddSaleModal} fetchSales={fetchSales} />
                 <DeleteSale show={showDeleteSaleModal} onHide={handleCloseDeleteSaleModal} fetchSales={fetchSales} selectedSale={selectedSale} />
                 <EditSale show={showEditSaleModal} onHide={handleCloseEditSaleModal} fetchSales={fetchSales} selectedSale={selectedSale} />
+                <AddPayment show={showAddPaymentModal} onHide={handleCloseAddPaymentModal} fetchSales={fetchSales} selectedSale={selectedSale} />
                 <div className='d-flex justify-content-between mt-5'>
                     <h1 className='mx-5 productTitle'><b>Resumen de ventas:</b></h1>
                     <Button className='m-1' variant="secondary" onClick={handlePrintSummary}>Imprimir Resumen  <BsPrinterFill /></Button>
