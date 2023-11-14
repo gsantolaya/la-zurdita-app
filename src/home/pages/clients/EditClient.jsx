@@ -89,16 +89,16 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                     placeholder="Ingrese el nombre"
                                     {...register("firstName", {
                                         required: true,
-                                        pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
+                                        // pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
                                     })}
                                     defaultValue={selectedClient.firstName}
                                 />
                                 {errors.firstName && errors.firstName.type === "required" && (
                                     <span className="validateSpan">Este campo es requerido.</span>
                                 )}
-                                {errors.firstName && errors.firstName.type === "pattern" && (
+                                {/* {errors.firstName && errors.firstName.type === "pattern" && (
                                     <span className="validateSpan">Nombre inválido. Solo se permiten letras y espacios.</span>
-                                )}
+                                )} */}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicLastName">
                                 <Form.Label className='modalLabel'>Apellido:</Form.Label>
@@ -109,16 +109,16 @@ export const EditClient = ({ show, onHide, fetchClients, selectedClient }) => {
                                     placeholder="Ingrese el apellido"
                                     {...register("lastName", {
                                         required: true,
-                                        pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
+                                        // pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
                                     })}
                                     defaultValue={selectedClient.lastName}
                                 />
                                 {errors.lastName && errors.lastName.type === "required" && (
                                     <span className="validateSpan">Este campo es requerido.</span>
                                 )}
-                                {errors.lastName && errors.lastName.type === "pattern" && (
+                                {/* {errors.lastName && errors.lastName.type === "pattern" && (
                                     <span className="validateSpan">Apellido inválido. Solo se permiten letras y espacios.</span>
-                                )}
+                                )} */}
                             </Form.Group>
                             <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicDescription">
                                 <Form.Label className='modalLabel'>Teléfono:</Form.Label>
