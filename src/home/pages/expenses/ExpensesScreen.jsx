@@ -162,51 +162,65 @@ export const ExpensesScreen = () => {
         setEndDate(formattedEndDate)
     }, [])
 
-    //FUNCION PARA IMPRIMIR LA TABLA
-    const handlePrintTable = () => {
-        const printWindow = window.open('', '', 'width=800,height=600')
-        printWindow.document.write('<html><head><title>Tabla de Gastos</title></head><body>')
-        printWindow.document.write('<h1>Gastos</h1>')
-        printWindow.document.write('<table border="1">')
-        printWindow.document.write('<thead><tr>')
-        printWindow.document.write('<th>Fecha</th>')
-        printWindow.document.write('<th>Número de comprobante</th>')
-        printWindow.document.write('<th>Proveedor</th>')
-        printWindow.document.write('<th>Cantidad</th>')
-        printWindow.document.write('<th>Descripción</th>')
-        printWindow.document.write('<th>Descripción adicional</th>')
-        printWindow.document.write('<th>Precio Unitario</th>')
-        printWindow.document.write('<th>Subtotal</th>')
-        printWindow.document.write('<th>Forma de pago</th>')
-        printWindow.document.write('<th>Pago a cuenta</th>')
-        printWindow.document.write('<th>Saldo</th>')
-        printWindow.document.write('</tr></thead><tbody>')
+//FUNCION PARA IMPRIMIR LA PRIMERA TABLA
+const handlePrintTable = () => {
+    const printWindow = window.open('', '', 'width=800,height=600')
+    printWindow.document.write('<html><head><title>Gastos Realizados</title></head><body>')
+    printWindow.document.write('<h1 style="text-align: center;"><b>Gastos Realizados</b></h1>')
+    printWindow.document.write('<table border="1" style="border-collapse: collapse; width: 100%;">')
+    printWindow.document.write('<thead style="background-color: #f2f2f2;">')
+    printWindow.document.write('<tr>')
+    printWindow.document.write('<th style="text-align: center; padding: 8px;">Fecha</th>')
+    printWindow.document.write('<th style="text-align: center; padding: 8px;">Nro. de comprobante</th>')
+    printWindow.document.write('<th style="text-align: center; padding: 8px;">Proveedor</th>')
+    printWindow.document.write('<th style="text-align: center; padding: 8px;">Items</th>')
+    printWindow.document.write('<th style="text-align: center; padding: 8px;">Total</th>')
+    printWindow.document.write('<th style="text-align: center; padding: 8px;">Pagos</th>')
+    printWindow.document.write('<th style="text-align: center; padding: 8px;">Saldo</th>')
+    printWindow.document.write('<th style="text-align: center; padding: 8px;">Estado</th>')
+    printWindow.document.write('</tr></thead><tbody>')
 
-        // Agrega los datos de los gastos a la tabla de la ventana de impresión
-        filteredExpenses.slice().sort(expenses).forEach((expense) => {
-            printWindow.document.write('<tr>')
-            printWindow.document.write(`<td>${formatTableDate(formatDate(expense.date))}</td>`)
-            printWindow.document.write(`<td>${expense.voucherNumber}</td>`)
-            printWindow.document.write(`<td>${expense.provider}</td>`)
-            printWindow.document.write(`<td>${expense.amount}</td>`)
-            printWindow.document.write(`<td>${expense.description}</td>`)
-            printWindow.document.write(`<td>${expense.additionalDescription}</td>`)
-            printWindow.document.write(`<td>$${expense.unitPrice}</td>`)
-            printWindow.document.write(`<td>$${expense.unitPrice * expense.amount}</td>`)
-            printWindow.document.write(`<td>${expense.wayToPay}</td>`)
-            printWindow.document.write(`<td>$${expense.payment}</td>`)
-            printWindow.document.write(`<td>$${expense.payment ? expense.amount * expense.unitPrice - expense.payment : null}</td>`)
-            printWindow.document.write('</td>')
-            printWindow.document.write('</tr>')
+    filteredExpenses.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((expense) => {
+        printWindow.document.write('<tr>')
+        printWindow.document.write(`<td style="text-align: center; padding: 8px;">${formatTableDate(formatDate(expense.date))}</td>`)
+        printWindow.document.write(`<td style="text-align: center; padding: 8px;">${expense.voucherNumber}</td>`)
+        printWindow.document.write(`<td style="text-align: center; padding: 8px;">${expense.provider}</td>`)
+        printWindow.document.write('<td style="text-align: center; padding: 8px;">')
+        expense.items.forEach((item, index) => {
+            printWindow.document.write(`<div style="padding: 2px;">${item.description} x ${item.amount} ${item.additionalDescription} - $${item.unitPrice}</div>`)
+            if (index < expense.items.length - 1) {
+                printWindow.document.write('<hr>')
+            }
         })
+        printWindow.document.write('</td>')
+        printWindow.document.write(`<td style="text-align: center; padding: 8px;">$${expense.items.reduce((total, item) => total + item.unitPrice, 0)}</td>`)
+        printWindow.document.write('<td style="text-align: center; padding: 8px;">')
+        expense.payments.forEach((payment, paymentIndex) => {
+            printWindow.document.write('<div>')
+            printWindow.document.write(`<div style="padding: 2px;"><b>Fecha:</b> ${formatTableDate(formatDate(payment.date))}</div>`)
+            printWindow.document.write(`<div style="padding: 2px;"><b>Pago:</b> $${payment.payment}</div>`)
+            printWindow.document.write(`<div style="padding: 2px;"><b>Forma de pago:</b> ${payment.wayToPay}</div>`)
+            printWindow.document.write('</div>')
+            if (paymentIndex < expense.payments.length - 1) {
+                printWindow.document.write('<hr>')
+            }
+        })
+        printWindow.document.write('</td>')
+        printWindow.document.write(`<td style="text-align: center; padding: 8px;">$${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payments.reduce((acc, payment) => acc + payment.payment, 0)}</td>`)
+        printWindow.document.write(`<td style="text-align: center; padding: 8px;" class="${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'red-text' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'green-text' : 'blue-text')}">`)
+        printWindow.document.write(`${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldo pendiente' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldado' : 'Saldo a favor')}</td>`)
+        printWindow.document.write('</tr>')
+    })
 
-        printWindow.document.write('</tbody></table>')
-        printWindow.document.write('</body></html>')
+    printWindow.document.write('</tbody></table>')
+    printWindow.document.write('</body></html>')
+    printWindow.document.close()
+    printWindow.print()
+    printWindow.close()
+}
+    
 
-        printWindow.document.close()
-        printWindow.print()
-        printWindow.close()
-    }
+
 
     //FUNCION PARA IMPRIMIR EL ARQUEO
     const handlePrintSummary = () => {
@@ -285,8 +299,7 @@ export const ExpensesScreen = () => {
                                 <th className='homeText text-center align-middle expenseTitle'>Proveedor</th>
                                 <th className='homeText text-center align-middle expenseTitle'>Items</th>
                                 <th className='homeText text-center align-middle expenseTitle'>Total</th>
-                                <th className='homeText text-center align-middle expenseTitle'>Pagado</th>
-                                <th className='homeText text-center align-middle expenseTitle'>Forma de pago</th>
+                                <th className='homeText text-center align-middle saleTitle'>Pagos</th>
                                 <th className='homeText text-center align-middle expenseTitle'>Saldo</th>
                                 <th className='homeText text-center align-middle expenseTitle'>Estado</th>
                                 <th>
@@ -318,13 +331,21 @@ export const ExpensesScreen = () => {
                                         <td className="text-center align-middle">
                                             ${expense.items.reduce((total, item) => total + item.unitPrice, 0)}
                                         </td>
-                                        <td className="text-center align-middle">${expense.payment}</td>
-                                        <td className="text-center align-middle">{expense.wayToPay}</td>
                                         <td className="text-center align-middle">
-                                            ${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment}
+                                            {expense.payments.map((payment, paymentIndex) => (
+                                                <div key={paymentIndex}>
+                                                    <div><b>Fecha:</b> {formatTableDate(formatDate(payment.date))}</div>
+                                                    <div><b>Pago:</b> ${payment.payment}</div>
+                                                    <div><b>Forma de pago:</b> {payment.wayToPay}</div>
+                                                    {paymentIndex < expense.payments.length - 1 && <hr />}
+                                                </div>
+                                            ))}
                                         </td>
-                                        <td className={`text-center align-middle ${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment > 0 ? 'red-text' : (expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment === 0 ? 'green-text' : 'blue-text')}`}>
-                                            {expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment > 0 ? 'Saldo pendiente' : (expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payment === 0 ? 'Saldado' : 'Saldo a favor')}
+                                        <td className="text-center align-middle">
+                                            ${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payments.reduce((acc, payment) => acc + payment.payment, 0)}
+                                        </td>
+                                        <td className={`text-center align-middle ${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'red-text' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'green-text' : 'blue-text')}`}>
+                                            {expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldo pendiente' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldado' : 'Saldo a favor')}
                                         </td>
                                         <td className="text-center align-middle">
                                             <Button className='m-1 editButton' onClick={() => handleShowEditExpenseModal(expense)} variant="">
