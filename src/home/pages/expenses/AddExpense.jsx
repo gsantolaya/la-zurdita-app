@@ -20,6 +20,11 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
 
     const [additionalItemFields, setAdditionalItemFields] = useState([])
     const [nextId, setNextId] = useState(1)
+    const [nextIdPay, setNextIdPay] = useState(1)
+
+    const [additionalPayFields, setAdditionalPayFields] = useState([])
+    const [payFieldsData, setPayFieldsData] = useState({})
+
 
     const [itemFieldsData, setItemFieldsData] = useState({})
 
@@ -50,6 +55,30 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
         setTotal(calculatedTotal)
     }, [subtotals])
 
+    const handleAddPayField = () => {
+        const newId = nextIdPay
+        setAdditionalPayFields([...additionalPayFields, { id: newId, type: "unidad" }]);
+
+        // Crea un objeto vacío para los valores del nuevo campo
+        setPayFieldsData(prevData => ({
+            ...prevData,
+            [newId]: {},
+        }))
+        setNextIdPay(newId + 1)
+    }
+
+    const handleRemovePayField = (id) => {
+        const updatedFields = additionalPayFields.filter((field) => field.id !== id);
+        setAdditionalPayFields(updatedFields)
+
+        // Eliminar los valores correspondientes al campo eliminado en el objeto de datos de producto
+        setPayFieldsData((prevData) => {
+            const updatedData = { ...prevData }
+            delete updatedData[id]
+            return updatedData
+        })
+    }
+
     // GUARDAR GASTO EN LA BASE DE DATOS
     const handleAddExpenseFormSubmit = async (data) => {
         if (additionalItemFields.length === 0) {
@@ -65,14 +94,22 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                     unitPrice: data[`unitPrice${field.id}`],
                 };
             });
+            const paymentsData = additionalPayFields.map((field) => {
+                return {
+                    date: data[`date${field.id}`],
+                    wayToPay: data[`wayToPay${field.id}`],
+                    payment: data[`payment${field.id}`],
+                    // tip: data[`tip${field.id}`],
+                };
+            });
             const expenseToCreate = {
                 date: data.date,
                 voucherNumber: data.voucherNumber,
                 provider: data.provider,
                 items: items,
-                wayToPay: data.wayToPay,
-                payment: data.payment
+                payments: paymentsData
             };
+            console.log(expenseToCreate)
             const response = await axios.post('/expenses/', expenseToCreate, {
                 headers: {
                     "access-token": store.token
@@ -279,7 +316,7 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                             </Button>
                         </div>
                         <h2 className='modalLabel col-12 m-3 text-center'>Total: ${total}</h2>
-                        <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
+                        {/* <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
                             <Form.Label className='modalLabel'>Pago:</Form.Label>
                             <Form.Control
                                 type="number"
@@ -307,7 +344,74 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                             {errors.wayToPay && (
                                 <span className="validateSpan">Seleccione una opción.</span>
                             )}
-                        </Form.Group>
+                        </Form.Group> */}
+                        <div className='col-12 row my-2'>
+                        <h5 className='modalLabel'>Pagos:</h5>
+                            {additionalPayFields.map((field, index) => (
+                                <div key={field.id} className='col-12 row my-2 align-items-center justify-content-between'>
+                                    <Form.Group className="formFields my-2 px-2 col-10 col-md-2" controlId="formBasicDate">
+                                        <Form.Label className='modalLabel'>Fecha:</Form.Label>
+                                        <Form.Control
+                                            type="date"
+                                            name={`date${field.id}`}
+                                            {...register(`date${field.id}`, { required: true })}
+                                            defaultValue={currentDate}
+                                            value={payFieldsData[field.id]?.item || ''}
+                                            onChange={(e) => {
+                                                setCurrentDate(e.target.value)
+                                                const newValue = e.target.value
+                                                setPayFieldsData((prevData) => ({
+                                                    ...prevData,
+                                                    [field.id]: { ...prevData[field.id], item: newValue },
+                                                }))
+                                            }}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group className="formFields m-2 col-3" controlId="formBasicWayToPay">
+                                        <Form.Label className='modalLabel'>Forma de pago:</Form.Label>
+                                        <Form.Select as="select" name={`wayToPay${field.id}`} {...register(`wayToPay${field.id}`, { required: true })}>
+                                            <option value="">Selecciona una categoría</option>
+                                            <option value="efectivo">Efectivo</option>
+                                            <option value="mercadoPago">Mercado pago</option>
+                                            <option value="transferencia">Transferencia</option>
+                                        </Form.Select>
+                                        {errors.wayToPay && (
+                                            <span className="validateSpan">Seleccione una opción.</span>
+                                        )}
+                                    </Form.Group>
+                                    <Form.Group className="formFields m-2 col-10 col-md-2" controlId="formBasicPayment">
+                                        <Form.Label className='modalLabel'>Pagado:</Form.Label>
+                                        <Form.Control type="number" maxLength={20} name={`payment${field.id}`} placeholder="0000"
+                                            {...register(`payment${field.id}`, {
+                                                required: true,
+                                                pattern: /^\d+(\.\d{1,2})?$/
+                                            })}
+                                        />
+                                        {errors.payment && (
+                                            <span className="validateSpan">Ingrese un número válido.</span>
+                                        )}
+                                    </Form.Group>
+                                    {/* <Form.Group className="formFields m-2 col-10 col-md-2" controlId="formBasicPayment">
+                                        <Form.Label className='modalLabel'>Propina:</Form.Label>
+                                        <Form.Control type="number" maxLength={20} name={`tip${field.id}`} placeholder="0000"
+                                            {...register(`tip${field.id}`, {
+                                                required: false,
+                                                pattern: /^\d+(\.\d{1,2})?$/
+                                            })}
+                                        />
+                                        {errors.tip && (
+                                            <span className="validateSpan">Ingrese un número válido.</span>
+                                        )}
+                                    </Form.Group> */}
+                                    <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemovePayField(field.id)} style={{ width: '40px', height: '40px' }}>
+                                        <FaTrashAlt />
+                                    </Button>
+                                </div>
+                            ))}
+                            <Button className='buttonsFormAddSale w-25' variant="secondary" type="button" onClick={handleAddPayField}>
+                                Agregar
+                            </Button>
+                        </div>
                         <Modal.Footer className="mt-3 col-12">
                             <Button className='buttonsFormAddSale m-2 w-100' variant="secondary" type="submit">
                                 Agregar Gasto
