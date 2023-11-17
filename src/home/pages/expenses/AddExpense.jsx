@@ -18,11 +18,11 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
     const [showErrorAddExpenseToast, setShowErrorAddExpenseToast] = useState(false)
     const store = TokenStorage()
 
-    const [additionalItemFields, setAdditionalItemFields] = useState([1])
+    const [additionalItemFields, setAdditionalItemFields] = useState([])
     const [itemFieldsData, setItemFieldsData] = useState({})
     const [nextId, setNextId] = useState(1)
 
-    const [additionalPayFields, setAdditionalPayFields] = useState([1])
+    const [additionalPayFields, setAdditionalPayFields] = useState([])
     const [nextIdPay, setNextIdPay] = useState(1)
 
     const [subtotals, setSubtotals] = useState([0])
@@ -37,8 +37,8 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
     const handleOnHideModal = () => {
         onHide()
         reset()
-        setAdditionalItemFields([1])
-        setAdditionalPayFields([1])
+        setAdditionalItemFields([])
+        setAdditionalPayFields([])
         setItemFieldsData({})
         setNextId(1)
         setSubtotals([0])
@@ -130,8 +130,8 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                 setShowConfirmationAddExpenseToast(true);
                 setNextId(1)
                 setItemFieldsData({})
-                setAdditionalItemFields([1])
-                setAdditionalPayFields([1])
+                setAdditionalItemFields([])
+                setAdditionalPayFields([])
                 fetchExpenses()
                 setSubtotals([0])
                 setTotal(0)
