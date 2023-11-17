@@ -13,21 +13,16 @@ import { FaTrashAlt } from 'react-icons/fa'
 
 export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) => {
     const [currentDate, setCurrentDate] = useState('')
-    const [defaultPaymentDate, setDefaultPaymentDate] = useState(currentDate);
     const { handleSubmit, register, reset, formState: { errors } } = useForm()
     const [showConfirmationEditExpenseToast, setShowConfirmationEditExpenseToast] = useState(false)
     const [showErrorEditExpenseToast, setShowErrorEditExpenseToast] = useState(false)
     const store = TokenStorage()
 
     const [additionalItemFields, setAdditionalItemFields] = useState([])
-    const [itemFieldsData, setItemFieldsData] = useState({})
     const [nextId, setNextId] = useState(1)
 
     const [additionalPaymentFields, setAdditionalPaymentFields] = useState([])
     const [nextPaymentId, setNextPaymentId] = useState(1)
-
-    // const [subtotals, setSubtotals] = useState([0])
-    // const [total, setTotal] = useState(0)
 
     //MANEJO DE TOASTS
     const handleConfirmationEditExpenseToastClose = () => {
@@ -100,6 +95,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
         const updatedFields = additionalItemFields.filter((itemField) => itemField.id !== id)
         setAdditionalItemFields(updatedFields)
     }
+
     const handleAddPaymentField = () => {
         const newId = nextPaymentId;
         setAdditionalPaymentFields([...additionalPaymentFields, { id: newId, type: "unidad" }]);
@@ -304,10 +300,6 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                             name={`paymentDate${paymentField.id}`}
                                             {...register(`paymentDate${paymentField.id}`, { required: true })}
                                             defaultValue=''
-                                            onChange={(e) => {
-                                                const newPaymentValue = e.target.value;
-                                                setDefaultPaymentDate(newPaymentValue);
-                                            }}
                                         />
                                     </Form.Group>
                                     <Form.Group className="formFields m-2 col-3" controlId="formBasicWayToPay">
