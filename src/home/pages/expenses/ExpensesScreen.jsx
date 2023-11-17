@@ -207,7 +207,7 @@ export const ExpensesScreen = () => {
             printWindow.document.write('<td style="text-align: center; padding: 8px;">')
             expense.payments.forEach((payment, paymentIndex) => {
                 printWindow.document.write('<div>')
-                printWindow.document.write(`<div style="padding: 2px;"><b>Fecha:</b> ${formatTableDate(formatDate(payment.date))}</div>`)
+                printWindow.document.write(`<div style="padding: 2px;"><b>Fecha:</b> ${formatTableDate(formatDate(payment.paymentDate))}</div>`)
                 printWindow.document.write(`<div style="padding: 2px;"><b>Pago:</b> $${payment.payment}</div>`)
                 printWindow.document.write(`<div style="padding: 2px;"><b>Forma de pago:</b> ${payment.wayToPay}</div>`)
                 printWindow.document.write('</div>')
@@ -344,7 +344,7 @@ export const ExpensesScreen = () => {
                                         <td className="text-center align-middle">
                                             {expense.payments.map((payment, paymentIndex) => (
                                                 <div key={paymentIndex}>
-                                                    <div><b>Fecha:</b> {formatTableDate(formatDate(payment.date))}</div>
+                                                    <div><b>Fecha:</b> {formatTableDate(formatDate(payment.paymentDate))}</div>
                                                     <div><b>Pago:</b> ${payment.payment}</div>
                                                     <div><b>Forma de pago:</b> {payment.wayToPay}</div>
                                                     {paymentIndex < expense.payments.length - 1 && <hr />}
@@ -354,8 +354,8 @@ export const ExpensesScreen = () => {
                                         <td className="text-center align-middle">
                                             ${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payments.reduce((acc, payment) => acc + payment.payment, 0)}
                                         </td>
-                                        <td className={`text-center align-middle ${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'red-text' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'green-text' : 'blue-text')}`}>
-                                            {expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldo pendiente' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldado' : 'Saldo a favor')}
+                                        <td className={`text-center align-middle ${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) < expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'red-text' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'green-text' : 'blue-text')}`}>
+                                            {expense.payments.reduce((acc, payment) => acc + payment.payment, 0) < expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldo pendiente' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldado' : 'Saldo a favor')}
                                         </td>
                                         <td className="text-center align-middle">
                                             <Button className='m-1 editButton' onClick={() => handleShowEditExpenseModal(expense)} variant="">
