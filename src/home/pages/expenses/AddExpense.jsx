@@ -22,8 +22,8 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
     const [itemFieldsData, setItemFieldsData] = useState({})
     const [nextId, setNextId] = useState(1)
 
-    const [additionalPayFields, setAdditionalPayFields] = useState([])
-    const [nextIdPay, setNextIdPay] = useState(1)
+    const [additionalPaymentFields, setAdditionalPaymentFields] = useState([])
+    const [nextPaymentId, setNextPaymentId] = useState(1)
 
     const [subtotals, setSubtotals] = useState([0])
     const [total, setTotal] = useState(0)
@@ -38,9 +38,10 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
         onHide()
         reset()
         setAdditionalItemFields([])
-        setAdditionalPayFields([])
+        setAdditionalPaymentFields([])
         setItemFieldsData({})
         setNextId(1)
+        setNextPaymentId(1)
         setSubtotals([0])
         setTotal(0)
     }
@@ -63,7 +64,7 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
     }
 
     const handleRemoveItemField = (id) => {
-        const updatedFields = additionalItemFields.filter((field) => field.id !== id)
+        const updatedFields = additionalItemFields.filter((itemField) => itemField.id !== id)
         setAdditionalItemFields(updatedFields)
         setItemFieldsData((prevData) => {
             const updatedData = { ...prevData }
@@ -79,14 +80,14 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
     }
 
     const handleAddPayField = () => {
-        const newId = nextIdPay
-        setAdditionalPayFields([...additionalPayFields, { id: newId, type: "unidad" }]);
-        setNextIdPay(newId + 1)
+        const newId = nextPaymentId
+        setAdditionalPaymentFields([...additionalPaymentFields, { id: newId, type: "unidad" }]);
+        setNextPaymentId(newId + 1)
     }
 
     const handleRemovePayField = (id) => {
-        const updatedFields = additionalPayFields.filter((field) => field.id !== id);
-        setAdditionalPayFields(updatedFields)
+        const updatedFields = additionalPaymentFields.filter((paymentField) => paymentField.id !== id);
+        setAdditionalPaymentFields(updatedFields)
     }
 
     // GUARDAR GASTO EN LA BASE DE DATOS
@@ -96,19 +97,19 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
             return;
         }
         try {
-            const items = additionalItemFields.map((field) => {
+            const items = additionalItemFields.map((itemField) => {
                 return {
-                    amount: data[`amount${field.id}`],
-                    description: data[`description${field.id}`],
-                    additionalDescription: data[`additionalDescription${field.id}`],
-                    unitPrice: data[`unitPrice${field.id}`],
+                    amount: data[`amount${itemField.id}`],
+                    description: data[`description${itemField.id}`],
+                    additionalDescription: data[`additionalDescription${itemField.id}`],
+                    unitPrice: data[`unitPrice${itemField.id}`],
                 };
             });
-            const paymentsData = additionalPayFields.map((field) => {
+            const paymentsData = additionalPaymentFields.map((paymentField) => {
                 return {
-                    date: data[`paymentDate${field.id}`],
-                    wayToPay: data[`wayToPay${field.id}`],
-                    payment: data[`payment${field.id}`],
+                    paymentDate: data[`paymentDate${paymentField.id}`],
+                    wayToPay: data[`wayToPay${paymentField.id}`],
+                    payment: data[`payment${paymentField.id}`],
                 };
             });
             const expenseToCreate = {
@@ -129,9 +130,10 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                 reset()
                 setShowConfirmationAddExpenseToast(true);
                 setNextId(1)
+                setNextPaymentId(1)
                 setItemFieldsData({})
                 setAdditionalItemFields([])
-                setAdditionalPayFields([])
+                setAdditionalPaymentFields([])
                 fetchExpenses()
                 setSubtotals([0])
                 setTotal(0)
@@ -210,21 +212,21 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                         </div>
                         <div className='col-12 row my-2'>
                             <h5 className='modalLabel'>Items:</h5>
-                            {additionalItemFields.map((field, index) => (
-                                <div key={field.id} className='col-12 row my-2 align-items-center justify-content-between'>
+                            {additionalItemFields.map((itemField, index) => (
+                                <div key={itemField.id} className='col-12 row my-2 align-items-center justify-content-between'>
                                     <Form.Group className="formFields my-2 px-2 col-12 col-md-3" controlId="formBasicDescription">
                                         <Form.Label className='modalLabel'>Descripción:</Form.Label>
                                         <Form.Control
                                             type="text"
-                                            name={`description${field.id}`}
+                                            name={`description${itemField.id}`}
                                             placeholder="Ingrese la descripción"
-                                            {...register(`description${field.id}`, { required: true })}
-                                            value={itemFieldsData[field.id]?.item || ''}
+                                            {...register(`description${itemField.id}`, { required: true })}
+                                            value={itemFieldsData[itemField.id]?.item || ''}
                                             onChange={(e) => {
                                                 const newValue = e.target.value
                                                 setItemFieldsData((prevData) => ({
                                                     ...prevData,
-                                                    [field.id]: { ...prevData[field.id], item: newValue },
+                                                    [itemField.id]: { ...prevData[itemField.id], item: newValue },
                                                 }))
                                             }}
                                         />
@@ -236,9 +238,9 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                                         <Form.Label className='modalLabel'>Cantidad:</Form.Label>
                                         <Form.Control
                                             type="text"
-                                            name={`amount${field.id}`}
+                                            name={`amount${itemField.id}`}
                                             placeholder="00"
-                                            {...register(`amount${field.id}`, {
+                                            {...register(`amount${itemField.id}`, {
                                                 required: true,
                                                 pattern: /^\d+(\.\d{1,2})?$|^\d+\.\d$/
                                             })}
@@ -252,9 +254,9 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                                         <Form.Label className='modalLabel'>Cantidad por:</Form.Label>
                                         <Form.Control
                                             type="text"
-                                            name={`additionalDescription${field.id}`}
+                                            name={`additionalDescription${itemField.id}`}
                                             placeholder="Ingrese la descripción adicional"
-                                            {...register(`additionalDescription${field.id}`, { required: true })}
+                                            {...register(`additionalDescription${itemField.id}`, { required: true })}
                                         />
                                         {errors.additionalDescription && errors.provider.type === "required" && (
                                             <span className="validateSpan">Este campo es requerido.</span>
@@ -264,9 +266,9 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                                         <Form.Label className='modalLabel'>Precio:</Form.Label>
                                         <Form.Control
                                             type="number"
-                                            name={`unitPrice${field.id}`}
+                                            name={`unitPrice${itemField.id}`}
                                             placeholder="Ingrese el precio"
-                                            {...register(`unitPrice${field.id}`, {
+                                            {...register(`unitPrice${itemField.id}`, {
                                                 required: false,
                                                 pattern: /^\d+(\.\d{1,2})?$|^\d+\.\d$/
                                             })}
@@ -274,7 +276,7 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                                                 const unitPrice = parseFloat(e.target.value)
                                                 const subtotal = unitPrice
                                                 const updatedSubtotals = [...subtotals]
-                                                updatedSubtotals[field.id] = subtotal
+                                                updatedSubtotals[itemField.id] = subtotal
                                                 setSubtotals(updatedSubtotals)
                                             }}
                                         />
@@ -282,7 +284,7 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                                             <span className="validateSpan">Ingrese un número válido.</span>
                                         )}
                                     </Form.Group>
-                                    <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemoveItemField(field.id)} style={{ width: '40px', height: '40px' }}>
+                                    <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemoveItemField(itemField.id)} style={{ width: '40px', height: '40px' }}>
                                         <FaTrashAlt />
                                     </Button>
                                 </div>
@@ -294,22 +296,18 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                         <h2 className='modalLabel col-12 m-3 text-center'>Total: ${total}</h2>
                         <div className='col-12 row my-2'>
                             <h5 className='modalLabel'>Pagos:</h5>
-                            {additionalPayFields.map((field, index) => (
-                                <div key={field.id} className='col-12 row my-2 align-items-center justify-content-between'>
+                            {additionalPaymentFields.map((paymentField, index) => (
+                                <div key={paymentField.id} className='col-12 row my-2 align-items-center justify-content-between'>
                                     <Form.Group className="formFields my-2 px-2 col-10 col-md-2" controlId="formBasicDate">
                                         <Form.Label className='modalLabel'>Fecha:</Form.Label>
                                         <Form.Control
                                             type="date"
-                                            name={`paymentDate${field.id}`}
-                                            {...register(`paymentDate${field.id}`, { required: true })}
+                                            name={`paymentDate${paymentField.id}`}
+                                            {...register(`paymentDate${paymentField.id}`, { required: true })}
                                             defaultValue={defaultPaymentDate}
                                             onChange={(e) => {
                                                 const newValue = e.target.value;
                                                 setDefaultPaymentDate(newValue);
-                                                // setPayFieldsData((prevData) => ({
-                                                //     ...prevData,
-                                                //     [field.id]: { ...prevData[field.id], item: newValue },
-                                                // }));
                                             }}
                                         />
                                     </Form.Group>
@@ -317,9 +315,9 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                                         <Form.Label className='modalLabel'>Forma de pago:</Form.Label>
                                         <Form.Select
                                             as="select"
-                                            name={`wayToPay${field.id}`}
+                                            name={`wayToPay${paymentField.id}`}
 
-                                            {...register(`wayToPay${field.id}`, { required: true })}>
+                                            {...register(`wayToPay${paymentField.id}`, { required: true })}>
                                             <option value="">Selecciona una categoría</option>
                                             <option value="efectivo">Efectivo</option>
                                             <option value="mercadoPago">Mercado pago</option>
@@ -331,8 +329,8 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                                     </Form.Group>
                                     <Form.Group className="formFields m-2 col-10 col-md-2" controlId="formBasicPayment">
                                         <Form.Label className='modalLabel'>Pagado:</Form.Label>
-                                        <Form.Control type="number" maxLength={20} name={`payment${field.id}`} placeholder="0000"
-                                            {...register(`payment${field.id}`, {
+                                        <Form.Control type="number" maxLength={20} name={`payment${paymentField.id}`} placeholder="0000"
+                                            {...register(`payment${paymentField.id}`, {
                                                 required: true,
                                                 pattern: /^\d+(\.\d{1,2})?$/
                                             })}
@@ -341,7 +339,7 @@ export const AddExpense = ({ show, onHide, fetchExpenses }) => {
                                             <span className="validateSpan">Ingrese un número válido.</span>
                                         )}
                                     </Form.Group>
-                                    <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemovePayField(field.id)} style={{ width: '40px', height: '40px' }}>
+                                    <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemovePayField(paymentField.id)} style={{ width: '40px', height: '40px' }}>
                                         <FaTrashAlt />
                                     </Button>
                                 </div>

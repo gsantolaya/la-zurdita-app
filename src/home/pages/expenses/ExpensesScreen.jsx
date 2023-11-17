@@ -117,19 +117,29 @@ export const ExpensesScreen = () => {
     //CALCULANDO TOTALES:
     // Función para calcular la cantidad de ventas por tipo de pago
     function calculateCountByWayToPay(wayToPay) {
-        const count = filteredExpenses.filter(expense => expense.wayToPay === wayToPay).length
-        return count === 0 ? 0 : count
+        const count = filteredExpenses.filter(expense =>
+            expense.payments.some(payment => payment.wayToPay === wayToPay)
+        ).length;
+        return count === 0 ? 0 : count;
     }
     // Función para calcular la suma de los valores de expense.payment por tipo de pago
     function calculateSubtotalByWayToPay(wayToPay) {
         const subtotal = filteredExpenses
-            .filter(expense => expense.wayToPay === wayToPay)
-            .reduce((total, expense) => total + expense.payment, 0)
-        return subtotal === 0 ? 0 : subtotal
+            .filter(expense => 
+                expense.payments.some(payment => payment.wayToPay === wayToPay)
+            )
+            .reduce((total, expense) => 
+                total + expense.payments.filter(payment => payment.wayToPay === wayToPay).reduce((acc, payment) => acc + payment.payment, 0),
+                0
+            );
+        return subtotal === 0 ? 0 : subtotal;
     }
     // Función para calcular el total de todos los valores expense.payment
     function calculateTotalExpenses() {
-        return filteredExpenses.reduce((total, expense) => total + expense.payment, 0)
+        return filteredExpenses.reduce((total, expense) => 
+            total + expense.payments.reduce((acc, payment) => acc + payment.payment, 0),
+            0
+        );
     }
 
     //FILTRAR POR FECHAS 
@@ -162,63 +172,63 @@ export const ExpensesScreen = () => {
         setEndDate(formattedEndDate)
     }, [])
 
-//FUNCION PARA IMPRIMIR LA PRIMERA TABLA
-const handlePrintTable = () => {
-    const printWindow = window.open('', '', 'width=800,height=600')
-    printWindow.document.write('<html><head><title>Gastos Realizados</title></head><body>')
-    printWindow.document.write('<h1 style="text-align: center;"><b>Gastos Realizados</b></h1>')
-    printWindow.document.write('<table border="1" style="border-collapse: collapse; width: 100%;">')
-    printWindow.document.write('<thead style="background-color: #f2f2f2;">')
-    printWindow.document.write('<tr>')
-    printWindow.document.write('<th style="text-align: center; padding: 8px;">Fecha</th>')
-    printWindow.document.write('<th style="text-align: center; padding: 8px;">Nro. de comprobante</th>')
-    printWindow.document.write('<th style="text-align: center; padding: 8px;">Proveedor</th>')
-    printWindow.document.write('<th style="text-align: center; padding: 8px;">Items</th>')
-    printWindow.document.write('<th style="text-align: center; padding: 8px;">Total</th>')
-    printWindow.document.write('<th style="text-align: center; padding: 8px;">Pagos</th>')
-    printWindow.document.write('<th style="text-align: center; padding: 8px;">Saldo</th>')
-    printWindow.document.write('<th style="text-align: center; padding: 8px;">Estado</th>')
-    printWindow.document.write('</tr></thead><tbody>')
-
-    filteredExpenses.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((expense) => {
+    //FUNCION PARA IMPRIMIR LA PRIMERA TABLA
+    const handlePrintTable = () => {
+        const printWindow = window.open('', '', 'width=800,height=600')
+        printWindow.document.write('<html><head><title>Gastos Realizados</title></head><body>')
+        printWindow.document.write('<h1 style="text-align: center;"><b>Gastos Realizados</b></h1>')
+        printWindow.document.write('<table border="1" style="border-collapse: collapse; width: 100%;">')
+        printWindow.document.write('<thead style="background-color: #f2f2f2;">')
         printWindow.document.write('<tr>')
-        printWindow.document.write(`<td style="text-align: center; padding: 8px;">${formatTableDate(formatDate(expense.date))}</td>`)
-        printWindow.document.write(`<td style="text-align: center; padding: 8px;">${expense.voucherNumber}</td>`)
-        printWindow.document.write(`<td style="text-align: center; padding: 8px;">${expense.provider}</td>`)
-        printWindow.document.write('<td style="text-align: center; padding: 8px;">')
-        expense.items.forEach((item, index) => {
-            printWindow.document.write(`<div style="padding: 2px;">${item.description} x ${item.amount} ${item.additionalDescription} - $${item.unitPrice}</div>`)
-            if (index < expense.items.length - 1) {
-                printWindow.document.write('<hr>')
-            }
-        })
-        printWindow.document.write('</td>')
-        printWindow.document.write(`<td style="text-align: center; padding: 8px;">$${expense.items.reduce((total, item) => total + item.unitPrice, 0)}</td>`)
-        printWindow.document.write('<td style="text-align: center; padding: 8px;">')
-        expense.payments.forEach((payment, paymentIndex) => {
-            printWindow.document.write('<div>')
-            printWindow.document.write(`<div style="padding: 2px;"><b>Fecha:</b> ${formatTableDate(formatDate(payment.date))}</div>`)
-            printWindow.document.write(`<div style="padding: 2px;"><b>Pago:</b> $${payment.payment}</div>`)
-            printWindow.document.write(`<div style="padding: 2px;"><b>Forma de pago:</b> ${payment.wayToPay}</div>`)
-            printWindow.document.write('</div>')
-            if (paymentIndex < expense.payments.length - 1) {
-                printWindow.document.write('<hr>')
-            }
-        })
-        printWindow.document.write('</td>')
-        printWindow.document.write(`<td style="text-align: center; padding: 8px;">$${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payments.reduce((acc, payment) => acc + payment.payment, 0)}</td>`)
-        printWindow.document.write(`<td style="text-align: center; padding: 8px;" class="${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'red-text' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'green-text' : 'blue-text')}">`)
-        printWindow.document.write(`${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldo pendiente' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldado' : 'Saldo a favor')}</td>`)
-        printWindow.document.write('</tr>')
-    })
+        printWindow.document.write('<th style="text-align: center; padding: 8px;">Fecha</th>')
+        printWindow.document.write('<th style="text-align: center; padding: 8px;">Nro. de comprobante</th>')
+        printWindow.document.write('<th style="text-align: center; padding: 8px;">Proveedor</th>')
+        printWindow.document.write('<th style="text-align: center; padding: 8px;">Items</th>')
+        printWindow.document.write('<th style="text-align: center; padding: 8px;">Total</th>')
+        printWindow.document.write('<th style="text-align: center; padding: 8px;">Pagos</th>')
+        printWindow.document.write('<th style="text-align: center; padding: 8px;">Saldo</th>')
+        printWindow.document.write('<th style="text-align: center; padding: 8px;">Estado</th>')
+        printWindow.document.write('</tr></thead><tbody>')
 
-    printWindow.document.write('</tbody></table>')
-    printWindow.document.write('</body></html>')
-    printWindow.document.close()
-    printWindow.print()
-    printWindow.close()
-}
-    
+        filteredExpenses.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((expense) => {
+            printWindow.document.write('<tr>')
+            printWindow.document.write(`<td style="text-align: center; padding: 8px;">${formatTableDate(formatDate(expense.date))}</td>`)
+            printWindow.document.write(`<td style="text-align: center; padding: 8px;">${expense.voucherNumber}</td>`)
+            printWindow.document.write(`<td style="text-align: center; padding: 8px;">${expense.provider}</td>`)
+            printWindow.document.write('<td style="text-align: center; padding: 8px;">')
+            expense.items.forEach((item, index) => {
+                printWindow.document.write(`<div style="padding: 2px;">${item.description} x ${item.amount} ${item.additionalDescription} - $${item.unitPrice}</div>`)
+                if (index < expense.items.length - 1) {
+                    printWindow.document.write('<hr>')
+                }
+            })
+            printWindow.document.write('</td>')
+            printWindow.document.write(`<td style="text-align: center; padding: 8px;">$${expense.items.reduce((total, item) => total + item.unitPrice, 0)}</td>`)
+            printWindow.document.write('<td style="text-align: center; padding: 8px;">')
+            expense.payments.forEach((payment, paymentIndex) => {
+                printWindow.document.write('<div>')
+                printWindow.document.write(`<div style="padding: 2px;"><b>Fecha:</b> ${formatTableDate(formatDate(payment.paymentDate))}</div>`)
+                printWindow.document.write(`<div style="padding: 2px;"><b>Pago:</b> $${payment.payment}</div>`)
+                printWindow.document.write(`<div style="padding: 2px;"><b>Forma de pago:</b> ${payment.wayToPay}</div>`)
+                printWindow.document.write('</div>')
+                if (paymentIndex < expense.payments.length - 1) {
+                    printWindow.document.write('<hr>')
+                }
+            })
+            printWindow.document.write('</td>')
+            printWindow.document.write(`<td style="text-align: center; padding: 8px;">$${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payments.reduce((acc, payment) => acc + payment.payment, 0)}</td>`)
+            printWindow.document.write(`<td style="text-align: center; padding: 8px;" class="${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'red-text' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'green-text' : 'blue-text')}">`)
+            printWindow.document.write(`${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldo pendiente' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldado' : 'Saldo a favor')}</td>`)
+            printWindow.document.write('</tr>')
+        })
+
+        printWindow.document.write('</tbody></table>')
+        printWindow.document.write('</body></html>')
+        printWindow.document.close()
+        printWindow.print()
+        printWindow.close()
+    }
+
 
 
 
@@ -334,7 +344,7 @@ const handlePrintTable = () => {
                                         <td className="text-center align-middle">
                                             {expense.payments.map((payment, paymentIndex) => (
                                                 <div key={paymentIndex}>
-                                                    <div><b>Fecha:</b> {formatTableDate(formatDate(payment.date))}</div>
+                                                    <div><b>Fecha:</b> {formatTableDate(formatDate(payment.paymentDate))}</div>
                                                     <div><b>Pago:</b> ${payment.payment}</div>
                                                     <div><b>Forma de pago:</b> {payment.wayToPay}</div>
                                                     {paymentIndex < expense.payments.length - 1 && <hr />}
@@ -344,8 +354,8 @@ const handlePrintTable = () => {
                                         <td className="text-center align-middle">
                                             ${expense.items.reduce((total, item) => total + item.unitPrice, 0) - expense.payments.reduce((acc, payment) => acc + payment.payment, 0)}
                                         </td>
-                                        <td className={`text-center align-middle ${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'red-text' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'green-text' : 'blue-text')}`}>
-                                            {expense.payments.reduce((acc, payment) => acc + payment.payment, 0) > expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldo pendiente' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldado' : 'Saldo a favor')}
+                                        <td className={`text-center align-middle ${expense.payments.reduce((acc, payment) => acc + payment.payment, 0) < expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'red-text' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'green-text' : 'blue-text')}`}>
+                                            {expense.payments.reduce((acc, payment) => acc + payment.payment, 0) < expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldo pendiente' : (expense.payments.reduce((acc, payment) => acc + payment.payment, 0) === expense.items.reduce((total, item) => total + item.unitPrice, 0) ? 'Saldado' : 'Saldo a favor')}
                                         </td>
                                         <td className="text-center align-middle">
                                             <Button className='m-1 editButton' onClick={() => handleShowEditExpenseModal(expense)} variant="">

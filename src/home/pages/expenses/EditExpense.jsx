@@ -17,9 +17,12 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const [showConfirmationEditExpenseToast, setShowConfirmationEditExpenseToast] = useState(false)
     const [showErrorEditExpenseToast, setShowErrorEditExpenseToast] = useState(false)
     const store = TokenStorage()
+
     const [additionalItemFields, setAdditionalItemFields] = useState([])
-    // const [total, setTotal] = useState(0);
     const [nextId, setNextId] = useState(1)
+
+    const [additionalPaymentFields, setAdditionalPaymentFields] = useState([])
+    const [nextPaymentId, setNextPaymentId] = useState(1)
 
     //MANEJO DE TOASTS
     const handleConfirmationEditExpenseToastClose = () => {
@@ -39,28 +42,34 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
 
     useEffect(() => {
         if (show && selectedExpense) {
-            reset();
-            const newFields = selectedExpense.items.map((item, index) => ({
+            const newItemFields = selectedExpense.items.map((item, index) => ({
                 id: index,
-            }));
-            setAdditionalItemFields(newFields);
-
-            const defaultValues = {};
-            newFields.forEach((field, index) => {
+            }))
+            const newPaymentFields = selectedExpense.payments.map((pay, index) => ({
+                id: index,
+            }))
+            setAdditionalItemFields(newItemFields);
+            setAdditionalPaymentFields(newPaymentFields);
+            reset()
+            const defaultItemsValues = {};
+            newItemFields.forEach((itemField, index) => {
                 const selectedItem = selectedExpense.items[index];
-                defaultValues[`description${field.id}`] = selectedItem.description;
-                defaultValues[`amount${field.id}`] = selectedItem.amount;
-                defaultValues[`additionalDescription${field.id}`] = selectedItem.additionalDescription;
-                defaultValues[`unitPrice${field.id}`] = selectedItem.unitPrice;
+                defaultItemsValues[`description${itemField.id}`] = selectedItem.description;
+                defaultItemsValues[`amount${itemField.id}`] = selectedItem.amount;
+                defaultItemsValues[`additionalDescription${itemField.id}`] = selectedItem.additionalDescription;
+                defaultItemsValues[`unitPrice${itemField.id}`] = selectedItem.unitPrice;
             });
-            reset(defaultValues);
-            // const calculatedTotal = newFields.reduce((accumulator, field) => {
-            //     const unitPrice = parseFloat(defaultValues[`unitPrice${field.id}`]) || 0;
-            //     return accumulator + unitPrice;
-            // }, 0);
-            // setTotal(calculatedTotal);
+            const defaultPaymentsValues = {};
+            newPaymentFields.forEach((paymentField, index) => {
+                const selectedPay = selectedExpense.payments[index];
+                defaultPaymentsValues[`paymentDate${paymentField.id}`] = selectedPay.paymentDate.substring(0, 10) || '';
+                defaultPaymentsValues[`wayToPay${paymentField.id}`] = selectedPay.wayToPay || '';
+                defaultPaymentsValues[`payment${paymentField.id}`] = selectedPay.payment || '';
+            });
+            reset({ ...defaultItemsValues, ...defaultPaymentsValues });
         }
     }, [show, selectedExpense, reset]);
+
 
     // MANEJO LA FECHA
     const getCurrentDateInArgentina = () => {
@@ -83,8 +92,19 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
         setNextId(newId + 1);
     }
     const handleRemoveItemField = (id) => {
-        const updatedFields = additionalItemFields.filter((field) => field.id !== id)
+        const updatedFields = additionalItemFields.filter((itemField) => itemField.id !== id)
         setAdditionalItemFields(updatedFields)
+    }
+
+    const handleAddPaymentField = () => {
+        const newId = nextPaymentId;
+        setAdditionalPaymentFields([...additionalPaymentFields, { id: newId, type: "unidad" }]);
+        setNextPaymentId(newId + 1);
+    }
+
+    const handleRemovePayField = (id) => {
+        const updatedFields = additionalPaymentFields.filter((paymentField) => paymentField.id !== id);
+        setAdditionalPaymentFields(updatedFields)
     }
 
     // GUARDAR GASTO EN LA BASE DE DATOS
@@ -94,21 +114,30 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
             return;
         }
         try {
-            const items = additionalItemFields.map((field) => {
+            const items = additionalItemFields.map((itemField) => {
                 return {
-                    amount: data[`amount${field.id}`],
-                    description: data[`description${field.id}`],
-                    additionalDescription: data[`additionalDescription${field.id}`],
-                    unitPrice: data[`unitPrice${field.id}`],
+                    amount: data[`amount${itemField.id}`],
+                    description: data[`description${itemField.id}`],
+                    additionalDescription: data[`additionalDescription${itemField.id}`],
+                    unitPrice: data[`unitPrice${itemField.id}`],
                 };
             });
+
+
+            const paymentsData = additionalPaymentFields.map((paymentField) => {
+                return {
+                    paymentDate: data[`paymentDate${paymentField.id}`],
+                    wayToPay: data[`wayToPay${paymentField.id}`],
+                    payment: data[`payment${paymentField.id}`],
+                };
+            });
+
             const expenseEdited = {
                 date: data.date,
                 voucherNumber: data.voucherNumber,
                 provider: data.provider,
                 items: items,
-                wayToPay: data.wayToPay,
-                payment: data.payment
+                payments: paymentsData
             };
 
             const response = await axios.put(`/expenses/${selectedExpense._id}`, expenseEdited, {
@@ -181,29 +210,25 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                     defaultValue={selectedExpense ? selectedExpense.provider : ''}
                                     {...register("provider", {
                                         required: true,
-                                        // pattern: /^[A-Za-zÁáÉéÍíÓóÚú\s]+$/
                                     })}
                                 />
                                 {errors.provider && errors.provider.type === "required" && (
                                     <span className="validateSpan">Este campo es requerido.</span>
                                 )}
-                                {/* {errors.provider && errors.provider.type === "pattern" && (
-                                    <span className="validateSpan">Nombre inválido. Solo se permiten letras y espacios.</span>
-                                )} */}
                             </Form.Group>
                         </div>
                         <div className='col-12 row my-2'>
                             <h5 className='modalLabel'>Items:</h5>
-                            {additionalItemFields.map((field, index) => (
-                                <div key={field.id} className='col-12 row my-2 align-items-center justify-content-between'>
+                            {additionalItemFields.map((itemField, index) => (
+                                <div key={itemField.id} className='col-12 row my-2 align-items-center justify-content-between'>
                                     <Form.Group className="formFields my-2 px-2 col-12 col-md-3" controlId="formBasicDescription">
                                         <Form.Label className='modalLabel'>Descripción:</Form.Label>
                                         <Form.Control
                                             type="text"
-                                            name={`description${field.id}`}
+                                            name={`description${itemField.id}`}
                                             placeholder="Ingrese la descripción"
-                                            defaultValue=""
-                                            {...register(`description${field.id}`, { required: true })}
+                                            defaultValue=''
+                                            {...register(`description${itemField.id}`, { required: true })}
                                         />
                                         {errors.description && errors.provider.type === "required" && (
                                             <span className="validateSpan">Este campo es requerido.</span>
@@ -213,10 +238,10 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                         <Form.Label className='modalLabel'>Cantidad:</Form.Label>
                                         <Form.Control
                                             type="text"
-                                            name={`amount${field.id}`}
+                                            name={`amount${itemField.id}`}
                                             placeholder="00"
                                             defaultValue=''
-                                            {...register(`amount${field.id}`, {
+                                            {...register(`amount${itemField.id}`, {
                                                 required: true,
                                                 pattern: /^\d+(\.\d{1,2})?$|^\d+\.\d$/
                                             })}
@@ -230,10 +255,10 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                         <Form.Label className='modalLabel'>Cantidad por:</Form.Label>
                                         <Form.Control
                                             type="text"
-                                            name={`additionalDescription${field.id}`}
+                                            name={`additionalDescription${itemField.id}`}
                                             placeholder="Ingrese la descripción adicional"
                                             defaultValue=''
-                                            {...register(`additionalDescription${field.id}`, { required: true })}
+                                            {...register(`additionalDescription${itemField.id}`, { required: true })}
                                         />
                                         {errors.additionalDescription && errors.provider.type === "required" && (
                                             <span className="validateSpan">Este campo es requerido.</span>
@@ -243,10 +268,10 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                         <Form.Label className='modalLabel'>Precio:</Form.Label>
                                         <Form.Control
                                             type="number"
-                                            name={`unitPrice${field.id}`}
+                                            name={`unitPrice${itemField.id}`}
                                             placeholder="Ingrese el precio"
                                             defaultValue=''
-                                            {...register(`unitPrice${field.id}`, {
+                                            {...register(`unitPrice${itemField.id}`, {
                                                 required: false,
                                                 pattern: /^\d+(\.\d{1,2})?$|^\d+\.\d$/
                                             })}
@@ -255,7 +280,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                             <span className="validateSpan">Ingrese un número válido.</span>
                                         )}
                                     </Form.Group>
-                                    <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemoveItemField(field.id)} style={{ width: '40px', height: '40px' }}>
+                                    <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemoveItemField(itemField.id)} style={{ width: '40px', height: '40px' }}>
                                         <FaTrashAlt />
                                     </Button>
                                 </div>
@@ -264,41 +289,61 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                 Agregar
                             </Button>
                         </div>
-                        {/* <h2 className='modalLabel col-12 m-3 text-center'>Total Anterior: ${total}</h2> */}
-                        <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicPayment">
-                            <Form.Label className='modalLabel'>Pago:</Form.Label>
-                            <Form.Control
-                                type="number"
-                                maxLength={10}
-                                name="payment"
-                                placeholder="Ingrese la cantidad"
-                                defaultValue={selectedExpense ? selectedExpense.payment : ''}
-                                {...register("payment", {
-                                    required: false,
-                                    pattern: /^\d+(\.\d{1,2})?$/
-                                })}
-                            />
-                            {errors.payment && (
-                                <span className="validateSpan">Ingrese un número válido.</span>
-                            )}
-                        </Form.Group>
-                        <Form.Group className="formFields m-2 col-10 col-md-5" controlId="formBasicWayToPay">
-                            <Form.Label className='modalLabel'>Forma de pago:</Form.Label>
-                            <Form.Select
-                                as="select"
-                                name="wayToPay" {...register("wayToPay", { required: true })}
-                                defaultValue={selectedExpense ? selectedExpense.wayToPay : ''}
-                            >
-                                <option value="">Seleccione una opción</option>
-                                <option value="efectivo">Efectivo</option>
-                                <option value="efectivo">Débito</option>
-                                <option value="transferencia">MercadoPago</option>
-                                <option value="transferencia">Transferencia</option>
-                            </Form.Select>
-                            {errors.wayToPay && (
-                                <span className="validateSpan">Seleccione una opción.</span>
-                            )}
-                        </Form.Group>
+                        <div className='col-12 row my-2'>
+                            <h5 className='modalLabel'>Pagos:</h5>
+                            {additionalPaymentFields.map((paymentField, index) => (
+                                <div key={paymentField.id} className='col-12 row my-2 align-items-center justify-content-between'>
+                                    <Form.Group className="formFields my-2 px-2 col-10 col-md-2" controlId="formBasicDate">
+                                        <Form.Label className='modalLabel'>Fecha:</Form.Label>
+                                        <Form.Control
+                                            type="date"
+                                            name={`paymentDate${paymentField.id}`}
+                                            {...register(`paymentDate${paymentField.id}`, { required: true })}
+                                            defaultValue=''
+                                        />
+                                    </Form.Group>
+                                    <Form.Group className="formFields m-2 col-3" controlId="formBasicWayToPay">
+                                        <Form.Label className='modalLabel'>Forma de pago:</Form.Label>
+                                        <Form.Select
+                                            as="select"
+                                            name={`wayToPay${paymentField.id}`}
+                                            defaultValue=''
+                                            {...register(`wayToPay${paymentField.id}`, { required: true })}>
+                                            <option value="">Selecciona una categoría</option>
+                                            <option value="efectivo">Efectivo</option>
+                                            <option value="mercadoPago">Mercado pago</option>
+                                            <option value="transferencia">Transferencia</option>
+                                        </Form.Select>
+                                        {errors.wayToPay && (
+                                            <span className="validateSpan">Seleccione una opción.</span>
+                                        )}
+                                    </Form.Group>
+                                    <Form.Group className="formFields m-2 col-10 col-md-2" controlId="formBasicPayment">
+                                        <Form.Label className='modalLabel'>Pagado:</Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            maxLength={20}
+                                            name={`payment${paymentField.id}`}
+                                            defaultValue=''
+                                            placeholder="0000"
+                                            {...register(`payment${paymentField.id}`, {
+                                                required: true,
+                                                pattern: /^\d+(\.\d{1,2})?$/
+                                            })}
+                                        />
+                                        {errors.payment && (
+                                            <span className="validateSpan">Ingrese un número válido.</span>
+                                        )}
+                                    </Form.Group>
+                                    <Button className='buttonsFormAddSale my-2 mt-4 col-1' variant="danger" type="button" onClick={() => handleRemovePayField(paymentField.id)} style={{ width: '40px', height: '40px' }}>
+                                        <FaTrashAlt />
+                                    </Button>
+                                </div>
+                            ))}
+                            <Button className='buttonsFormAddSale w-25' variant="secondary" type="button" onClick={handleAddPaymentField}>
+                                Agregar
+                            </Button>
+                        </div>
                         <Modal.Footer className="mt-3 col-12">
                             <Button className='buttonsFormAddSale m-2 w-100' variant="secondary" type="submit">
                                 Modificar Gasto
