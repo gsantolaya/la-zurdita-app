@@ -310,7 +310,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                                             defaultValue=''
                                             {...register(`wayToPay${paymentField.id}`, { required: true })}>
                                             <option value="">Selecciona una categoría</option>
-                                            <option value="efectivo">Débito</option>
+                                            <option value="débito">Débito</option>
                                             <option value="efectivo">Efectivo</option>
                                             <option value="mercadoPago">Mercado pago</option>
                                             <option value="transferencia">Transferencia</option>
