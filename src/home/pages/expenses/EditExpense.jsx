@@ -17,10 +17,8 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
     const [showConfirmationEditExpenseToast, setShowConfirmationEditExpenseToast] = useState(false)
     const [showErrorEditExpenseToast, setShowErrorEditExpenseToast] = useState(false)
     const store = TokenStorage()
-
     const [additionalItemFields, setAdditionalItemFields] = useState([])
     const [nextId, setNextId] = useState(1)
-
     const [additionalPaymentFields, setAdditionalPaymentFields] = useState([])
     const [nextPaymentId, setNextPaymentId] = useState(1)
 
@@ -87,7 +85,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
         const newId = nextId;
         const newItemField = {
             id: newId,
-        };
+        }
         setAdditionalItemFields([...additionalItemFields, newItemField]);
         setNextId(newId + 1);
     }
@@ -122,8 +120,7 @@ export const EditExpense = ({ show, onHide, fetchExpenses, selectedExpense }) =>
                     unitPrice: data[`unitPrice${itemField.id}`],
                 };
             });
-
-
+            
             const paymentsData = additionalPaymentFields.map((paymentField) => {
                 return {
                     paymentDate: data[`paymentDate${paymentField.id}`],

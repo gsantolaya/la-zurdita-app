@@ -327,7 +327,7 @@ export const SalesScreen = () => {
                                 <td class="homeText"><b>$${total}</b></td>
                                 <td class="homeText">${sale.payments.map((payment, paymentIndex) => (
                 `<div key=${paymentIndex}>
-                                        <div><b>Fecha:</b> ${formatTableDate(formatDate(payment.date))}</div>
+                                        <div><b>Fecha:</b> ${formatTableDate(formatDate(payment.paymentDate))}</div>
                                         <div><b>Pago:</b> $${payment.payment}</div>
                                         <div><b>Forma de pago:</b> ${payment.wayToPay}</div>
                                         <div><b>Propina:</b> $${payment.tip || 0}</div>
@@ -658,7 +658,7 @@ export const SalesScreen = () => {
                                         <td className="text-center align-middle"><b>${total}</b></td>
                                         <td className="text-center align-middle">{sale.payments.map((payment, paymentIndex) => (
                                             <div key={paymentIndex}>
-                                                <div><b>Fecha:</b> {formatTableDate(formatDate(payment.date))}</div>
+                                                <div><b>Fecha:</b> {formatTableDate(formatDate(payment.paymentDate))}</div>
                                                 <div><b>Pago:</b> ${payment.payment}</div>
                                                 <div><b>Forma de pago:</b> {payment.wayToPay}</div>
                                                 <div><b>Propina:</b> ${payment.tip || 0}</div>
