@@ -76,7 +76,7 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
             // Update the sale
             const paymentsData = additionalPayFields.map((field) => {
                 return {
-                    date: formData[`date${field.id}`],
+                    paymentDate: formData[`paymentDate${field.id}`],
                     wayToPay: formData[`wayToPay${field.id}`],
                     payment: formData[`payment${field.id}`],
                     tip: formData[`tip${field.id}`],
@@ -165,8 +165,8 @@ export const FinishOrder = ({ show, onHide, fetchSales, selectedSale }) => {
                                         <Form.Label className='modalLabel'>Fecha:</Form.Label>
                                         <Form.Control
                                             type="date"
-                                            name={`date${field.id}`}
-                                            {...register(`date${field.id}`, { required: true })}
+                                            name={`paymentDate${field.id}`}
+                                            {...register(`paymentDate${field.id}`, { required: true })}
                                             defaultValue={currentDate}
                                             value={payFieldsData[field.id]?.item || ''}
                                             onChange={(e) => {
